@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>{{ message.title }}</h1>
+    <p><strong>Por: {{ message.user.username }}</strong></p>
+    <p>{{ message.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+    <p>{{ message.message }}</p>
+    <p><em>Firma: {{ message.signature }}</em></p>
+
+    <h2>Comentarios</h2>
+    {% for comment in message.comments %}
+        <div class="comment-box{% if highlighted_comment_id == comment.id %} highlighted-comment{% endif %}">
+            <p><strong>{{ comment.user.username }}</strong></p>
+            <p>{{ comment.text }}</p>
+            <p><em>{{ comment.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</em></p>
+            <a href="{{ url_for('delete_comment', comment_id=comment.id) }}" class="btn btn-danger">Eliminar</a>
+        </div>
+    {% endfor %}
+
+    <form method="post">
+        <div class="form-group">
+            <label for="text">Agregar un comentario:</label>
+            <textarea id="text" name="text" class="form-control" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Comentar</button>
+    </form>
+{% endblock %}

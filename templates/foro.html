@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Foro</h1>
+    {% if current_user.is_authenticated %}
+        <a href="{{ url_for('postear') }}" class="btn btn-primary mb-3">Crear nuevo post</a>
+    {% endif %}
+    {% for message in messages %}
+        <div class="card mb-3 post-card">
+            <div class="card-header post-header">
+                <strong class="post-title">{{ message.title }}</strong> - <em class="post-timestamp">{{ message.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</em>
+                <p class="post-user"><span class="label">Por:</span> {{ message.user.username }}</p>
+            </div>
+            <div class="card-body post-body">
+                <p class="post-message">{{ message.message }}</p>
+                <p class="post-signature"><span class="label">Firma:</span> {{ message.signature }}</p>
+                <a href="{{ url_for('message_detail', message_id=message.id) }}" class="btn btn-secondary">Ver detalles</a>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}

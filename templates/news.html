@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Revolución Torteña - Noticias</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background-color: #1f1f1f;
+            padding: 0;
+        }
+        .navbar-nav {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+        .nav-item {
+            position: relative;
+            margin: 0 5px;
+            transition: transform 0.3s;
+        }
+        .nav-link {
+            color: #1e90ff !important;
+            background-color: #1f1f1f;
+            padding: 15px 20px;
+            display: block;
+            text-decoration: none;
+            transition: background-color 0.3s, color 0.3s, transform 0.3s;
+            border-radius: 5px 5px 0 0;
+        }
+        .nav-link:hover {
+            background-color: #1e90ff;
+            color: #121212 !important;
+        }
+        .nav-link.active {
+            background-color: #000000;
+            color: #ffffff !important;
+            transform: scale(1.1);
+        }
+        .nav-item:not(.active) {
+            transform: scale(0.9);
+        }
+        .container {
+            margin-top: 20px;
+        }
+        .title {
+            font-size: 3em;
+            text-align: center;
+            margin-top: 20px;
+            color: #1e90ff;
+            transition: color 0.3s, transform 0.3s;
+        }
+        .title:hover {
+            color: #00bfff;
+            transform: scale(1.1);
+        }
+        .highlight {
+            transition: color 0.3s, transform 0.3s;
+            color: #1e90ff;
+        }
+        .highlight:hover {
+            color: #00bfff;
+            transform: scale(1.1);
+        }
+        .btn-primary {
+            background-color: #1e90ff;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #00bfff;
+        }
+        .content {
+            padding: 20px;
+            background: #1f1f1f;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .comment-box {
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #2f2f2f;
+            border-radius: 5px;
+            background-color: #1f1f1f;
+        }
+        .comment-box .btn-link {
+            color: #1e90ff;
+        }
+        .comment-box .btn-link:hover {
+            color: #00bfff;
+            text-decoration: none;
+        }
+        .highlighted-comment {
+            border: 2px solid #1e90ff;
+        }
+        .news-container {
+            margin-top: 20px;
+        }
+        .news-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            background: #1f1f1f;
+        }
+        .news-urgent {
+            border-left: 5px solid red;
+        }
+        .news-notice {
+            border-left: 5px solid yellow;
+        }
+        .news-ceo {
+            border-left: 5px solid #1e90ff;
+        }
+        .news-description {
+            color: #1e90ff;
+        }
+        .flag {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            width: 100px;
+            height: auto;
+            animation: wave 2s infinite;
+        }
+        @keyframes wave {
+            0% { transform: rotate(0deg); }
+            50% { transform: rotate(10deg); }
+            100% { transform: rotate(0deg); }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item{% if request.endpoint == 'news' %} active{% endif %}">
+                    <a class="nav-link{% if request.endpoint == 'news' %} active{% endif %}" href="{{ url_for('news') }}">Revolución Torteña - Noticias</a>
+                </li>
+                <li class="nav-item{% if request.endpoint == 'home' %} active{% endif %}">
+                    <a class="nav-link{% if request.endpoint == 'home' %} active{% endif %}" href="{{ url_for('home') }}">Revolución Torteña</a>
+                </li>
+                {% if current_user.is_authenticated %}
+                    <li class="nav-item{% if request.endpoint == 'foro' %} active{% endif %}">
+                        <a class="nav-link{% if request.endpoint == 'foro' %} active{% endif %}" href="{{ url_for('foro') }}">Foro</a>
+                    </li>
+                    <li class="nav-item{% if request.endpoint == 'postear' %} active{% endif %}">
+                        <a class="nav-link{% if request.endpoint == 'postear' %} active{% endif %}" href="{{ url_for('postear') }}">Postear</a>
+                    </li>
+                    <li class="nav-item">
+                        <span class="nav-link">Bienvenido, {{ current_user.username }}!</span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                    </li>
+                    {% if current_user.is_admin %}
+                        <li class="nav-item{% if request.endpoint == 'admin_dashboard' %} active{% endif %}">
+                            <a class="nav-link{% if request.endpoint == 'admin_dashboard' %} active{% endif %}" href="{{ url_for('admin_dashboard') }}">Admin</a>
+                        </li>
+                    {% endif %}
+                {% else %}
+                    <li class="nav-item{% if request.endpoint == 'login' %} active{% endif %}">
+                        <a class="nav-link{% if request.endpoint == 'login' %} active{% endif %}" href="{{ url_for('login') }}">Login</a>
+                    </li>
+                    <li class="nav-item{% if request.endpoint == 'register' %} active{% endif %}">
+                        <a class="nav-link{% if request.endpoint == 'register' %} active{% endif %}" href="{{ url_for('register') }}">Register</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        <h1 class="title">Revolución Torteña News</h1>
+        <div class="news-container">
+            <div class="news-item news-notice">
+                <h2>Aviso Importante - Desde el pedido, hasta la entrega.</h2>
+                <p class="news-description">¡Hola a todos! En Revolución Torteña, queremos compartir con ustedes nuestro proceso de preparación y cómo gestionamos sus pedidos para garantizar siempre la mejor experiencia.</p>
+                <p class="news-description">Nuestras tortas parrillas son el fruto de un proceso cuidadoso que dura entre 40 y 60 minutos. Este proceso incluye amasado, descanso de la masa, formación de las tortas (simples o rellenas) y cocción en parrilla a carbón, brindando ese sabor único que nos caracteriza.</p>
+                <p class="news-description">Entendemos que deseen disfrutar de nuestras tortas lo antes posible. Aunque hacemos todo lo posible por mantener tiempos de espera razonables, es posible que se presenten demoras si recibimos muchos pedidos simultáneamente. Les pedimos paciencia y comprensión, especialmente durante horas pico.</p>
+                <p class="news-description">Flavia y yo, Axel, somos los fundadores y únicos empleados de Revolución Torteña. Nos encargamos de todo: desde el amasado hasta la entrega. Estamos siempre dispuestos a informarles sobre el estado de su pedido.</p>
+                <p class="news-description">Además, hemos centralizado la captura de pedidos a través de varios medios digitales para asegurar una comunicación eficiente y precisa. Al realizar su pedido, les pediremos información relevante para garantizar una entrega sin contratiempos. Este sistema nos permite gestionar mejor su tiempo de espera y asegurar la calidad de nuestro servicio.</p>
+                <p class="news-description">Invitamos a todos a consultar libremente sobre sus pedidos en cualquier momento. Valoramos mucho el respeto mutuo y no toleramos malos tratos. Ponemos todo nuestro corazón en lo que hacemos, y agradecemos su comprensión y apoyo continuo.</p>
+                <p class="news-description">¡Gracias por elegir Revolución Torteña!</p>
+                <p class="news-description">Con cariño,<br>Flavia y Axel</p>
+                <p class="news-description">02/06/2024 - CEO Revolucion Torteña.</p>
+            </div>
+            <div class="news-item news-urgent">
+                <h2>Urgente</h2>
+                <p class="news-description">Esta es una noticia urgente.</p>
+            </div>
+            <div class="news-item news-notice">
+                <h2>Avisos</h2>
+                <p class="news-description">Este es un aviso importante.</p>
+            </div>
+            <div class="news-item news-ceo">
+                <h2>Comentarios del CEO</h2>
+                <p class="news-description">Este es un comentario del CEO.</p>
+            </div>
+        </div>
+    </div>
+    <img src="{{ url_for('static', filename='img/argentina_flag.jpg') }}" class="flag" alt="Bandera Argentina">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

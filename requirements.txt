@@ -1,0 +1,25 @@
+# Flask framework
+Flask==2.0.3
+
+# Extensions for Flask
+Flask-SQLAlchemy==2.5.1
+SQLAlchemy==1.4.32
+Flask-Migrate
+flask_bcrypt==0.7.1  # Flask extension for Bcrypt hashing
+Flask-Login==0.5.0  # Flask extension for user session management
+
+# PostgreSQL database adapter for Python
+psycopg2-binary
+
+# Template engine
+Jinja2==3.1.4
+
+# Various utilities
+click==8.1.7
+itsdangerous==2.1.2
+MarkupSafe==2.1.1
+typing_extensions==4.12.1
+Werkzeug==2.0.3  # Especifica solo una versión de Werkzeug para evitar conflictos
+
+# For loading environment variables from .env file
+python-dotenv==0.19.0

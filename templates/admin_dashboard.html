@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Admin Dashboard</h1>
+    <h2>Usuarios</h2>
+    <table class="table table-striped table-dark">
+        <thead class="thead-dark">
+            <tr>
+                <th class="text-primary">ID</th>
+                <th class="text-primary">Username</th>
+                <th class="text-primary">Email</th>
+                <th class="text-primary">Admin</th>
+                <th class="text-primary">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td class="text-primary">{{ user.id }}</td>
+                <td class="text-primary">{{ user.username }}</td>
+                <td class="text-primary">{{ user.email }}</td>
+                <td class="text-primary">{{ user.is_admin }}</td>
+                <td>
+                    <a href="{{ url_for('delete_user', user_id=user.id) }}" class="btn btn-danger">Eliminar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Mensajes</h2>
+    <table class="table table-striped table-dark">
+        <thead class="thead-dark">
+            <tr>
+                <th class="text-primary">ID</th>
+                <th class="text-primary">Título</th>
+                <th class="text-primary">Mensaje</th>
+                <th class="text-primary">Usuario</th>
+                <th class="text-primary">Acciones</th>
+                <th class="text-primary">Ver Mensaje</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for message in messages %}
+            <tr>
+                <td class="text-primary">{{ message.id }}</td>
+                <td class="text-primary">{{ message.title }}</td>
+                <td class="text-primary">{{ message.message }}</td>
+                <td class="text-primary">{{ message.user.username }}</td>
+                <td>
+                    <a href="{{ url_for('admin_delete_post', post_id=message.id) }}" class="btn btn-danger">Eliminar</a>
+                </td>
+                <td>
+                    <a href="{{ url_for('message_detail_admin', message_id=message.id) }}" class="btn btn-info">Ver Mensaje</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Comentarios</h2>
+    <table class="table table-striped table-dark">
+        <thead class="thead-dark">
+            <tr>
+                <th class="text-primary">ID</th>
+                <th class="text-primary">Comentario</th>
+                <th class="text-primary">Usuario</th>
+                <th class="text-primary">Mensaje</th>
+                <th class="text-primary">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for comment in comments %}
+            <tr>
+                <td class="text-primary">{{ comment.id }}</td>
+                <td class="text-primary">{{ comment.text }}</td>
+                <td class="text-primary">{{ comment.user.username }}</td>
+                <td class="text-primary">{{ comment.message.title }}</td>
+                <td>
+                    <a href="{{ url_for('delete_comment', comment_id=comment.id) }}" class="btn btn-danger">Eliminar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
