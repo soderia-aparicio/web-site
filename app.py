@@ -218,6 +218,28 @@ def delete_comment(comment_id):
         flash('Comment deleted successfully.')
     return redirect(url_for('admin_dashboard'))
 
+# Nueva ruta: Ver perfil del usuario
+@app.route('/perfil')
+@login_required
+def perfil():
+    return render_template('perfil.html', user=current_user, title="Perfil del Usuario")
+
+# Nueva ruta: Editar perfil del usuario
+@app.route('/perfil/editar', methods=['GET', 'POST'])
+@login_required
+def editar_perfil():
+    if request.method == 'POST':
+        current_user.username = request.form['username']
+        current_user.email = request.form['email']
+        current_user.phone_number = request.form['phone_number']
+
+        # Guardar los cambios en la base de datos
+        db.session.commit()
+        flash('Perfil actualizado exitosamente.', 'success')
+        return redirect(url_for('perfil'))
+
+    return render_template('editar_perfil.html', user=current_user, title="Editar Perfil")
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()

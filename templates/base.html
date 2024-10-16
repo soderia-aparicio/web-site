@@ -8,98 +8,98 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
         body {
-            background-color: #121212;
-            color: #ffffff;
-            font-family: 'Poppins', sans-serif;
+            background-color: #121212;  /* Color de fondo oscuro */
+            color: #ffffff;  /* Texto en color blanco */
+            font-family: 'Poppins', sans-serif;  /* Fuente utilizada */
             margin: 0;
             padding: 0;
         }
         .navbar {
-            background-color: #1f1f1f;
+            background-color: #1f1f1f;  /* Fondo de la barra de navegación */
             padding: 0;
         }
         .navbar-nav {
             display: flex;
-            justify-content: center;
+            justify-content: center;  /* Alineación centrada de los elementos del menú */
             width: 100%;
         }
         .nav-item {
             position: relative;
-            margin: 0 5px;
-            transition: transform 0.3s;
+            margin: 0 5px;  /* Espaciado entre elementos del menú */
+            transition: transform 0.3s;  /* Transición para efectos visuales */
         }
         .nav-link {
-            color: #1e90ff !important;
-            background-color: #1f1f1f;
-            padding: 15px 20px;
+            color: #1e90ff !important;  /* Color del enlace */
+            background-color: #1f1f1f;  /* Fondo del enlace */
+            padding: 15px 20px;  /* Espaciado dentro del enlace */
             display: block;
             text-decoration: none;
-            transition: background-color 0.3s, color 0.3s, transform 0.3s;
-            border-radius: 5px 5px 0 0;
+            transition: background-color 0.3s, color 0.3s, transform 0.3s;  /* Transición para color y transformación */
+            border-radius: 5px 5px 0 0;  /* Bordes redondeados en la parte superior */
         }
         .nav-link:hover {
-            background-color: #1e90ff;
-            color: #121212 !important;
+            background-color: #1e90ff;  /* Fondo azul al pasar el ratón */
+            color: #121212 !important;  /* Color del texto al pasar el ratón */
         }
         .nav-link.active {
-            background-color: #000000;
-            color: #ffffff !important;
-            transform: scale(1.1);
+            background-color: #000000;  /* Fondo negro para el enlace activo */
+            color: #ffffff !important;  /* Texto blanco para el enlace activo */
+            transform: scale(1.1);  /* Aumenta ligeramente el tamaño del enlace activo */
         }
         .nav-item:not(.active) {
-            transform: scale(0.9);
+            transform: scale(0.9);  /* Escala más pequeña para los elementos no activos */
         }
         .container {
-            margin-top: 20px;
+            margin-top: 20px;  /* Margen superior para el contenido principal */
         }
         .title {
             font-size: 3em;
-            text-align: center;
+            text-align: center;  /* Título centrado */
             margin-top: 20px;
-            color: #1e90ff;
-            transition: color 0.3s, transform 0.3s;
+            color: #1e90ff;  /* Color azul del título */
+            transition: color 0.3s, transform 0.3s;  /* Transición para color y transformación del título */
         }
         .title:hover {
-            color: #00bfff;
-            transform: scale(1.1);
+            color: #00bfff;  /* Cambio de color al pasar el ratón */
+            transform: scale(1.1);  /* Escala del título al pasar el ratón */
         }
         .highlight {
             transition: color 0.3s, transform 0.3s;
-            color: #1e90ff;
+            color: #1e90ff;  /* Texto destacado en color azul */
         }
         .highlight:hover {
-            color: #00bfff;
-            transform: scale(1.1);
+            color: #00bfff;  /* Cambio de color al pasar el ratón sobre texto destacado */
+            transform: scale(1.1);  /* Escala del texto destacado al pasar el ratón */
         }
         .btn-primary {
-            background-color: #1e90ff;
+            background-color: #1e90ff;  /* Fondo azul para botones primarios */
             border: none;
         }
         .btn-primary:hover {
-            background-color: #00bfff;
+            background-color: #00bfff;  /* Fondo celeste al pasar el ratón */
         }
         .content {
             padding: 20px;
-            background: #1f1f1f;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            background: #1f1f1f;  /* Fondo oscuro para el contenido */
+            border-radius: 10px;  /* Bordes redondeados */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);  /* Sombra para darle profundidad */
         }
         .comment-box {
             padding: 10px;
             margin: 10px 0;
-            border: 1px solid #2f2f2f;
+            border: 1px solid #2f2f2f;  /* Borde oscuro para los comentarios */
             border-radius: 5px;
-            background-color: #1f1f1f;
+            background-color: #1f1f1f;  /* Fondo oscuro para los comentarios */
         }
         .comment-box .btn-link {
-            color: #1e90ff;
+            color: #1e90ff;  /* Enlaces dentro de los comentarios */
         }
         .comment-box .btn-link:hover {
-            color: #00bfff;
+            color: #00bfff;  /* Cambio de color al pasar el ratón sobre los enlaces */
             text-decoration: none;
         }
         .highlighted-comment {
-            border: 2px solid #1e90ff;
+            border: 2px solid #1e90ff;  /* Borde azul para comentarios destacados */
         }
         .news-container {
             margin-top: 20px;
@@ -108,20 +108,20 @@
             padding: 15px;
             margin-bottom: 10px;
             border-radius: 5px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            background: #1f1f1f;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);  /* Sombra para noticias */
+            background: #1f1f1f;  /* Fondo oscuro para noticias */
         }
         .news-urgent {
-            border-left: 5px solid red;
+            border-left: 5px solid red;  /* Indicador rojo para noticias urgentes */
         }
         .news-notice {
-            border-left: 5px solid yellow;
+            border-left: 5px solid yellow;  /* Indicador amarillo para avisos */
         }
         .news-ceo {
-            border-left: 5px solid #1e90ff;
+            border-left: 5px solid #1e90ff;  /* Indicador azul para noticias del CEO */
         }
         .news-description {
-            color: #1e90ff;
+            color: #1e90ff;  /* Texto de descripción de noticias en azul */
         }
         .flag {
             position: fixed;
@@ -129,7 +129,7 @@
             right: 10px;
             width: 100px;
             height: auto;
-            animation: wave 2s infinite;
+            animation: wave 2s infinite;  /* Animación de onda para la bandera */
         }
         @keyframes wave {
             0% { transform: rotate(0deg); }
@@ -138,17 +138,38 @@
         }
         /* Estilo adicional para las tablas en admin_dashboard.html */
         .table th, .table td {
-            color: #1e90ff;
+            color: #1e90ff;  /* Color azul para el texto de las tablas */
         }
         /* Estilo adicional para los posts en foro.html */
         .post-card {
-            background-color: #d3d3d3; /* Fondo gris claro */
+            background-color: #d3d3d3;  /* Fondo gris claro para los posts */
         }
         .post-header, .post-body {
-            color: #1e90ff; /* Texto azul */
+            color: #1e90ff;  /* Texto azul para el encabezado y cuerpo del post */
         }
         .label {
-            color: #00bfff; /* Texto celeste para 'Por:' y 'Firma:' */
+            color: #00bfff;  /* Texto celeste para 'Por:' y 'Firma:' */
+        }
+        /* Estilo para la sección de perfil del usuario */
+        .profile-container {
+            background-color: #000000;  /* Fondo negro para la sección de perfil */
+            padding: 20px;
+            border-radius: 10px;  /* Bordes redondeados */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);  /* Sombra para darle profundidad */
+        }
+        .profile-username {
+            font-weight: bold;  /* Texto en negrita para el nombre de usuario */
+            color: #1e90ff;  /* Color azul igual que el menú */
+            background-color: #1f1f1f;  /* Fondo oscuro */
+            padding: 10px;
+            border-radius: 5px;  /* Bordes redondeados */
+            display: inline-block;
+        }
+        .profile-field {
+            color: #1e90ff;  /* Color azul para los campos de Email y Teléfono */
+        }
+        .profile-value {
+            color: #ffffff;  /* Color blanco para los valores de los campos */
         }
     </style>
 </head>
@@ -159,39 +180,51 @@
         </button>
         <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
             <ul class="navbar-nav">
+                <!-- Enlace para Noticias -->
                 <li class="nav-item{% if request.endpoint == 'news' %} active{% endif %}">
-                    <a class="nav-link{% if request.endpoint == 'news' %} active{% endif %}" href="{{ url_for('news') }}">Revolución Torteña - Noticias</a>
+                    <a class="nav-link{% if request.endpoint == 'news' %} active{% endif %}" href="{{ url_for('news') }}">Soderia Aparicio - Noticias</a>
                 </li>
+                <!-- Enlace para la página de inicio -->
                 <li class="nav-item{% if request.endpoint == 'home' %} active{% endif %}">
-                    <a class="nav-link{% if request.endpoint == 'home' %} active{% endif %}" href="{{ url_for('home') }}">Revolución Torteña</a>
-                </li>
-                <li class="nav-item{% if request.endpoint == 'videos' %} active{% endif %}"> <!-- Nueva solapa de Videos -->
-                    {% if current_user.is_authenticated %}
-                        <a class="nav-link{% if request.endpoint == 'videos' %} active{% endif %}" href="{{ url_for('videos') }}">Videos</a>
-                    {% endif %}
+                    <a class="nav-link{% if request.endpoint == 'home' %} active{% endif %}" href="{{ url_for('home') }}">Soderia Aparicio</a>
                 </li>
                 {% if current_user.is_authenticated %}
+                    <!-- Enlace para Videos, visible solo si el usuario está autenticado -->
+                    <li class="nav-item{% if request.endpoint == 'videos' %} active{% endif %}">
+                        <a class="nav-link{% if request.endpoint == 'videos' %} active{% endif %}" href="{{ url_for('videos') }}">Videos</a>
+                    </li>
+                    <!-- Enlace para el Foro -->
                     <li class="nav-item{% if request.endpoint == 'foro' %} active{% endif %}">
                         <a class="nav-link{% if request.endpoint == 'foro' %} active{% endif %}" href="{{ url_for('foro') }}">Foro</a>
                     </li>
+                    <!-- Enlace para Postear -->
                     <li class="nav-item{% if request.endpoint == 'postear' %} active{% endif %}">
                         <a class="nav-link{% if request.endpoint == 'postear' %} active{% endif %}" href="{{ url_for('postear') }}">Postear</a>
                     </li>
+                    <!-- Enlace para Perfil -->
+                    <li class="nav-item{% if request.endpoint == 'perfil' %} active{% endif %}">
+                        <a class="nav-link{% if request.endpoint == 'perfil' %} active{% endif %}" href="{{ url_for('perfil') }}">Perfil</a>
+                    </li>
+                    <!-- Mensaje de bienvenida con el nombre del usuario -->
                     <li class="nav-item">
                         <span class="nav-link">Bienvenido, {{ current_user.username }}!</span>
                     </li>
+                    <!-- Enlace para Logout -->
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
                     </li>
                     {% if current_user.is_admin %}
+                        <!-- Enlace para el Dashboard de Administración, visible solo para administradores -->
                         <li class="nav-item{% if request.endpoint == 'admin_dashboard' %} active{% endif %}">
                             <a class="nav-link{% if request.endpoint == 'admin_dashboard' %} active{% endif %}" href="{{ url_for('admin_dashboard') }}">Admin</a>
                         </li>
                     {% endif %}
                 {% else %}
+                    <!-- Enlace para Login, visible solo si el usuario no está autenticado -->
                     <li class="nav-item{% if request.endpoint == 'login' %} active{% endif %}">
                         <a class="nav-link{% if request.endpoint == 'login' %} active{% endif %}" href="{{ url_for('login') }}">Login</a>
                     </li>
+                    <!-- Enlace para Register, visible solo si el usuario no está autenticado -->
                     <li class="nav-item{% if request.endpoint == 'register' %} active{% endif %}">
                         <a class="nav-link{% if request.endpoint == 'register' %} active{% endif %}" href="{{ url_for('register') }}">Register</a>
                     </li>
@@ -200,8 +233,9 @@
         </div>
     </nav>
     <div class="container">
-        {% block content %}{% endblock %}
+        {% block content %}{% endblock %}  <!-- Bloque para contenido dinámico -->
     </div>
+    <!-- Imagen de la bandera de Argentina con animación de onda -->
     <img src="{{ url_for('static', filename='img/argentina_flag.jpg') }}" class="flag" alt="Bandera Argentina">
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>

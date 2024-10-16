@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="container">
+    <h2 class="my-4">Editar Perfil</h2>
+    <form method="POST" action="{{ url_for('editar_perfil') }}">
+      <div class="form-group">
+        <label for="username">Nombre de Usuario</label>
+        <input type="text" class="form-control" id="username" name="username" value="{{ user.username }}" required>
+      </div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
+      </div>
+      <div class="form-group">
+        <label for="phone_number">Número de Teléfono</label>
+        <input type="text" class="form-control" id="phone_number" name="phone_number" value="{{ user.phone_number }}" required>
+      </div>
+      <button type="submit" class="btn btn-success">Guardar Cambios</button>
+    </form>
+  </div>
+{% endblock %}

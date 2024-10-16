@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="container">
+    <h2 class="my-4">Perfil del Usuario</h2>
+    <div class="profile-container">
+      <!-- Sección del perfil -->
+      <h5 class="profile-username">{{ current_user.username }}</h5> <!-- Nombre del usuario con el estilo adecuado -->
+      <p class="profile-field">Email: <span class="profile-value">{{ current_user.email }}</span></p> <!-- Email del usuario con estilo personalizado -->
+      <p class="profile-field">Número de Teléfono: <span class="profile-value">{{ current_user.phone_number }}</span></p> <!-- Número de teléfono del usuario con estilo personalizado -->
+      <a href="{{ url_for('editar_perfil') }}" class="btn btn-primary">Editar Perfil</a>
+    </div>
+  </div>
+{% endblock %}
