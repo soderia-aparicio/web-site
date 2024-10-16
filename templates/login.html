@@ -1,15 +1,28 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Login</h1>
-    <form method="POST">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
-        <br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-        <br>
-        <button type="submit">Login</button>
-    </form>
-    <a href="{{ url_for('register') }}">Register</a>
+    <div class="container content mt-5">
+        <h1 class="title">Login</h1>
+        <form method="POST" class="form-group">
+            <!-- Form group for username input -->
+            <div class="form-group">
+                <label for="username" class="highlight">Username:</label>
+                <!-- Input field for username -->
+                <input type="text" id="username" name="username" class="form-control" required>
+            </div>
+            <!-- Form group for password input -->
+            <div class="form-group">
+                <label for="password" class="highlight">Password:</label>
+                <!-- Input field for password -->
+                <input type="password" id="password" name="password" class="form-control" required>
+            </div>
+            <!-- Buttons for login and register, aligned horizontally -->
+            <div class="d-flex justify-content-between mt-4">
+                <!-- Submit button for login -->
+                <button type="submit" class="btn btn-primary">Login</button>
+                <!-- Link to register page, styled as a button -->
+                <a href="{{ url_for('register') }}" class="btn btn-secondary">Register</a>
+            </div>
+        </form>
+    </div>
 {% endblock %}

@@ -166,7 +166,9 @@
                     <a class="nav-link{% if request.endpoint == 'home' %} active{% endif %}" href="{{ url_for('home') }}">Revolución Torteña</a>
                 </li>
                 <li class="nav-item{% if request.endpoint == 'videos' %} active{% endif %}"> <!-- Nueva solapa de Videos -->
-                    <a class="nav-link{% if request.endpoint == 'videos' %} active{% endif %}" href="{{ url_for('videos') }}">Videos</a>
+                    {% if current_user.is_authenticated %}
+                        <a class="nav-link{% if request.endpoint == 'videos' %} active{% endif %}" href="{{ url_for('videos') }}">Videos</a>
+                    {% endif %}
                 </li>
                 {% if current_user.is_authenticated %}
                     <li class="nav-item{% if request.endpoint == 'foro' %} active{% endif %}">

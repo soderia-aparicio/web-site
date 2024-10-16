@@ -1,32 +1,41 @@
-<!doctype html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Register</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-    <div class="container">
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container content mt-5">
         <h2 class="my-4">Register</h2>
         <form method="POST" action="{{ url_for('register') }}">
+            <!-- Form group for username input -->
             <div class="form-group">
-                <label for="username">Username</label>
+                <label for="username" class="highlight">Username</label>
+                <!-- Input field for username -->
                 <input type="text" class="form-control" id="username" name="username" required>
             </div>
+            <!-- Form group for email input -->
             <div class="form-group">
-                <label for="email">Email</label>
+                <label for="email" class="highlight">Email</label>
+                <!-- Input field for email -->
                 <input type="email" class="form-control" id="email" name="email" required>
             </div>
+            <!-- Form group for phone number input -->
             <div class="form-group">
-                <label for="password">Password</label>
+                <label for="phone_number" class="highlight">Phone Number</label>
+                <!-- Input field for phone number -->
+                <input type="text" class="form-control" id="phone_number" name="phone_number" required>
+            </div>
+            <!-- Form group for password input -->
+            <div class="form-group">
+                <label for="password" class="highlight">Password</label>
+                <!-- Input field for password -->
                 <input type="password" class="form-control" id="password" name="password" required>
             </div>
+            <!-- Form group for confirm password input -->
+            <div class="form-group">
+                <label for="confirm_password" class="highlight">Confirm Password</label>
+                <!-- Input field for confirm password -->
+                <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+            </div>
+            <!-- Submit button for registration -->
             <button type="submit" class="btn btn-primary">Register</button>
         </form>
     </div>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
-</html>
+{% endblock %}

@@ -29,6 +29,7 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
+    phone_number = db.Column(db.String(20), nullable=False)  # Nuevo campo para el número de teléfono
     password = db.Column(db.String(200), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
 
@@ -66,6 +67,8 @@ def before_request():
 
 @app.route('/')
 def home():
+    if not current_user.is_authenticated:
+        return redirect(url_for('login'))
     return render_template('home.html', title="Revolución Torteña")
 
 @app.route('/news')
@@ -156,12 +159,25 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         email = request.form['email']
+        phone_number = request.form['phone_number']
         password = request.form['password']
+        confirm_password = request.form['confirm_password']
+
+        # Verificar si las contraseñas coinciden
+        if password != confirm_password:
+            flash('Passwords do not match. Please try again.', 'danger')
+            return redirect(url_for('register'))
+
+        # Crear un nuevo usuario con los datos ingresados
         hashed_password = generate_password_hash(password, method='sha256')
-        user = User(username=username, email=email, password=hashed_password)
-        db.session.add(user)
+        new_user = User(username=username, email=email, phone_number=phone_number, password=hashed_password)
+
+        # Agregar el nuevo usuario a la base de datos
+        db.session.add(new_user)
         db.session.commit()
+        flash('Registration successful! Please login.', 'success')
         return redirect(url_for('login'))
+
     return render_template('register.html', title="Register")
 
 @app.route('/admin')
