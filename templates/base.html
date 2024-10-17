@@ -206,6 +206,12 @@
                     <li class="nav-item{% if request.endpoint == 'perfil' %} active{% endif %}">
                         <a class="nav-link{% if request.endpoint == 'perfil' %} active{% endif %}" href="{{ url_for('perfil') }}">Perfil</a>
                     </li>
+                    <!-- Enlace para Gestión de Usuarios, visible solo para master y desarrolladores -->
+                    {% if current_user.role in ['developer', 'master'] %}
+                        <li class="nav-item{% if request.endpoint == 'gestion_usuarios' %} active{% endif %}">
+                            <a class="nav-link{% if request.endpoint == 'gestion_usuarios' %} active{% endif %}" href="{{ url_for('gestion_usuarios') }}">Gestión de Usuarios</a>
+                        </li>
+                    {% endif %}
                     <!-- Mensaje de bienvenida con el nombre del usuario -->
                     <li class="nav-item">
                         <span class="nav-link">Bienvenido, {{ current_user.username }}!</span>

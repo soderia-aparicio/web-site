@@ -29,9 +29,9 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    phone_number = db.Column(db.String(20), nullable=False)  # Nuevo campo para el número de teléfono
+    phone_number = db.Column(db.String(20), nullable=False)
     password = db.Column(db.String(200), nullable=False)
-    is_admin = db.Column(db.Boolean, default=False)
+    role = db.Column(db.String(20), default='client')  # Campo para el rol del usuario
 
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -53,27 +53,29 @@ class Comment(db.Model):
     user = db.relationship('User', backref=db.backref('comments', lazy=True))
     message = db.relationship('Message', backref=db.backref('comments', lazy=True))
 
-def admin_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if not current_user.is_admin:
-            return redirect(url_for('login'))
-        return f(*args, **kwargs)
-    return decorated_function
+def role_required(roles):
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            if current_user.role not in roles:
+                return redirect(url_for('login'))
+            return f(*args, **kwargs)
+        return decorated_function
+    return decorator
 
 @app.before_request
 def before_request():
-    g.show_admin_link = current_user.is_authenticated and current_user.is_admin
+    g.show_admin_link = current_user.is_authenticated and current_user.role in ['developer', 'master']
 
 @app.route('/')
 def home():
     if not current_user.is_authenticated:
         return redirect(url_for('login'))
-    return render_template('home.html', title="Revolución Torteña")
+    return render_template('home.html', title="Soderia Aparicio")
 
 @app.route('/news')
 def news():
-    return render_template('news.html', title="Revolución Torteña - Noticias")
+    return render_template('news.html', title="Soderia Aparicio - Noticias")
 
 @app.route('/foro')
 def foro():
@@ -98,6 +100,27 @@ def postear():
             return redirect(url_for('foro'))
     return render_template('postear.html', title="Postear")
 
+@app.route('/gestion_usuarios', methods=['GET', 'POST'])
+@login_required
+@role_required(['developer', 'master'])
+def gestion_usuarios():
+    if request.method == 'POST':
+        user_id = request.form['user_id']
+        user = User.query.get(user_id)
+        if user:
+            if 'role_developer' in request.form and current_user.role == 'developer':
+                user.role = 'developer'
+            elif 'role_master' in request.form and current_user.role in ['developer', 'master']:
+                user.role = 'master'
+            elif 'role_employee' in request.form and current_user.role in ['developer', 'master']:
+                user.role = 'employee'
+            elif 'role_client' in request.form:
+                user.role = 'client'
+            db.session.commit()
+            flash('Rol del usuario actualizado exitosamente.')
+    users = User.query.all()
+    return render_template('gestion_usuarios.html', users=users, title="Gestión de Usuarios")
+
 @app.route('/message/<int:message_id>', methods=['GET', 'POST'])
 def message_detail(message_id):
     message = Message.query.get_or_404(message_id)
@@ -115,22 +138,6 @@ def message_detail(message_id):
         highlighted_comment_id = new_comment.id
         return redirect(url_for('message_detail', message_id=message.id, _anchor=f'comment-{highlighted_comment_id}'))
     return render_template('message_detail.html', message=message, highlighted_comment_id=highlighted_comment_id)
-
-@app.route('/message/admin/<int:message_id>', methods=['GET', 'POST'])
-@admin_required
-def message_detail_admin(message_id):
-    message = Message.query.get_or_404(message_id)
-    highlighted_comment_id = None
-    if request.method == 'POST':
-        text = request.form['text']
-        ip_address = request.remote_addr
-        new_comment = Comment(text=text, ip_address=ip_address, user_id=current_user.id, message_id=message.id)
-        db.session.add(new_comment)
-        db.session.commit()
-        flash('Comment added successfully.', 'success')
-        highlighted_comment_id = new_comment.id
-        return redirect(url_for('message_detail_admin', message_id=message.id, _anchor=f'comment-{highlighted_comment_id}'))
-    return render_template('message_detail_admin.html', message=message, highlighted_comment_id=highlighted_comment_id)
 
 @app.route('/videos')
 def videos():
@@ -180,51 +187,11 @@ def register():
 
     return render_template('register.html', title="Register")
 
-@app.route('/admin')
-@admin_required
-def admin_dashboard():
-    users = User.query.all()
-    messages = Message.query.all()
-    comments = Comment.query.all()
-    return render_template('admin_dashboard.html', users=users, messages=messages, comments=comments, title="Admin Dashboard")
-
-@app.route('/delete_user/<int:user_id>')
-@admin_required
-def delete_user(user_id):
-    user = User.query.get(user_id)
-    if user:
-        db.session.delete(user)
-        db.session.commit()
-        flash('User deleted successfully.')
-    return redirect(url_for('admin_dashboard'))
-
-@app.route('/delete_post/<int:post_id>')
-@admin_required
-def admin_delete_post(post_id):
-    post = Message.query.get(post_id)
-    if post:
-        db.session.delete(post)
-        db.session.commit()
-        flash('Post deleted successfully.')
-    return redirect(url_for('admin_dashboard'))
-
-@app.route('/delete_comment/<int:comment_id>')
-@admin_required
-def delete_comment(comment_id):
-    comment = Comment.query.get(comment_id)
-    if comment:
-        db.session.delete(comment)
-        db.session.commit()
-        flash('Comment deleted successfully.')
-    return redirect(url_for('admin_dashboard'))
-
-# Nueva ruta: Ver perfil del usuario
 @app.route('/perfil')
 @login_required
 def perfil():
     return render_template('perfil.html', user=current_user, title="Perfil del Usuario")
 
-# Nueva ruta: Editar perfil del usuario
 @app.route('/perfil/editar', methods=['GET', 'POST'])
 @login_required
 def editar_perfil():

@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Gestión de Usuarios</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #121212;  /* Color de fondo oscuro */
+            color: #ffffff;  /* Texto en color blanco */
+            font-family: 'Poppins', sans-serif;  /* Fuente utilizada */
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            margin-top: 30px;
+        }
+        .card {
+            background-color: #1f1f1f;  /* Fondo oscuro para la tarjeta */
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);  /* Sombra para darle profundidad */
+        }
+        .card-title {
+            color: #1e90ff;  /* Color azul para el título */
+        }
+        .btn-primary {
+            background-color: #1e90ff;  /* Fondo azul para botones primarios */
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #00bfff;  /* Fondo celeste al pasar el ratón */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 class="text-center">Gestión de Usuarios</h2>
+        <div class="table-responsive">
+            <table class="table table-dark table-striped">
+                <thead>
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Email</th>
+                        <th>Teléfono</th>
+                        <th>Rol</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.phone_number }}</td>
+                        <td>
+                            <!-- Formulario para actualizar el rol del usuario -->
+                            <form method="post" action="{{ url_for('gestion_usuarios') }}">
+                                <input type="hidden" name="user_id" value="{{ user.id }}">
+                                {% if current_user.role == 'developer' %}
+                                    <!-- Opción de desarrollador, solo visible para el desarrollador -->
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="role_developer" value="developer" id="role_developer_{{ user.id }}" {% if user.role == 'developer' %}checked{% endif %}>
+                                        <label class="form-check-label" for="role_developer_{{ user.id }}">Desarrollador</label>
+                                    </div>
+                                {% endif %}
+                                {% if current_user.role in ['developer', 'master'] %}
+                                    <!-- Opciones de master y empleado, visibles para desarrollador y master -->
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="role_master" value="master" id="role_master_{{ user.id }}" {% if user.role == 'master' %}checked{% endif %}>
+                                        <label class="form-check-label" for="role_master_{{ user.id }}">Master</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="role_employee" value="employee" id="role_employee_{{ user.id }}" {% if user.role == 'employee' %}checked{% endif %}>
+                                        <label class="form-check-label" for="role_employee_{{ user.id }}">Empleado</label>
+                                    </div>
+                                {% endif %}
+                                <!-- Opción de cliente, visible para todos los usuarios autorizados -->
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="role_client" value="client" id="role_client_{{ user.id }}" {% if user.role == 'client' %}checked{% endif %}>
+                                    <label class="form-check-label" for="role_client_{{ user.id }}">Cliente</label>
+                                </div>
+                        </td>
+                        <td>
+                            <!-- Botón para guardar los cambios en el rol del usuario -->
+                            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

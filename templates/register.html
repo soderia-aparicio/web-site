@@ -34,6 +34,16 @@
                 <!-- Input field for confirm password -->
                 <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
             </div>
+            <!-- Role selection for registration -->
+            <div class="form-group">
+                <label for="role" class="highlight">Role</label>
+                <!-- Dropdown to select role -->
+                <select class="form-control" id="role" name="role" required>
+                    <option value="client" selected>Client</option>
+                    <option value="employee">Employee</option>
+                    <!-- Master and Developer options are not available during initial registration -->
+                </select>
+            </div>
             <!-- Submit button for registration -->
             <button type="submit" class="btn btn-primary">Register</button>
         </form>
