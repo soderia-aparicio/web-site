@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1 class="title text-center">Gestión de Repartos</h1>
+    <div class="content">
+        <!-- Formulario para agregar un nuevo reparto -->
+        <form method="POST" action="{{ url_for('crear_reparto') }}" class="mb-4">
+            <div class="form-group">
+                <label for="reparto_nombre" class="text-light">Nombre del Reparto</label>
+                <input type="text" class="form-control" id="reparto_nombre" name="reparto_nombre" placeholder="Nombre del reparto" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Agregar Reparto</button>
+        </form>
+
+        <!-- Tabla de repartos existentes -->
+        <h2 class="text-center mt-5 mb-3">Repartos Existentes</h2>
+        <table class="table table-dark table-striped">
+            <thead>
+                <tr>
+                    <th>Nombre del Reparto</th>
+                    <th>Clientes Asignados</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for reparto in repartos %}
+                <tr>
+                    <td>{{ reparto.nombre }}</td>
+                    <td>
+                        {% for cliente in reparto.clientes %}
+                            {{ cliente.nombre }}{% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>
+                        <form method="POST" action="{{ url_for('modificar_reparto', reparto_id=reparto.id) }}" class="d-inline">
+                            <button type="submit" class="btn btn-primary">Modificar</button>
+                        </form>
+                        <form method="POST" action="{{ url_for('eliminar_reparto', reparto_id=reparto.id) }}" class="d-inline">
+                            <button type="submit" class="btn btn-danger" onclick="return confirm('¿Está seguro de que desea eliminar este reparto?');">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Formulario para asignar cliente a reparto -->
+    <div class="content mt-4">
+        <h2 class="text-center">Asignar Cliente a Reparto</h2>
+        <form method="POST" action="{{ url_for('asignar_cliente') }}">
+            <div class="form-group">
+                <label for="cliente_id" class="text-light">Seleccionar Cliente</label>
+                <select class="form-control" id="cliente_id" name="cliente_id" required>
+                    {% for cliente in clientes_disponibles %}
+                        <option value="{{ cliente.id }}">{{ cliente.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="reparto_id" class="text-light">Seleccionar Reparto</label>
+                <select class="form-control" id="reparto_id" name="reparto_id" required>
+                    {% for reparto in repartos %}
+                        <option value="{{ reparto.id }}">{{ reparto.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Asignar Cliente</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

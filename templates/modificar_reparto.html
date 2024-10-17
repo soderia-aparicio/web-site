@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+  <h2 class="my-4">Modificar Reparto</h2>
+  <form method="POST" action="{{ url_for('modificar_reparto', reparto_id=reparto.id) }}">
+    <div class="form-group">
+      <label for="cliente">Cliente</label>
+      <input type="text" class="form-control" id="cliente" value="{{ reparto.cliente.nombre }}" readonly>
+    </div>
+    <div class="form-group">
+      <label for="cantidad">Cantidad de Productos</label>
+      <input type="number" class="form-control" id="cantidad" name="cantidad" value="{{ reparto.cantidad }}" required>
+    </div>
+    <div class="form-group">
+      <label for="fecha">Fecha de Reparto</label>
+      <input type="date" class="form-control" id="fecha" name="fecha" value="{{ reparto.fecha }}" required>
+    </div>
+    <div class="form-group">
+      <label for="observaciones">Observaciones</label>
+      <textarea class="form-control" id="observaciones" name="observaciones">{{ reparto.observaciones }}</textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+  </form>
+</div>
+{% endblock %}

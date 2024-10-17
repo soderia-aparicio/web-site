@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+  <h2 class="my-4">Crear Nuevo Reparto</h2>
+  <form method="POST" action="{{ url_for('crear_reparto') }}">
+    <div class="form-group">
+      <label for="cliente">Seleccionar Cliente</label>
+      <select class="form-control" id="cliente" name="cliente_id" required>
+        {% for cliente in clientes %}
+        <option value="{{ cliente.id }}">{{ cliente.nombre }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="cantidad">Cantidad de Productos</label>
+      <input type="number" class="form-control" id="cantidad" name="cantidad" required>
+    </div>
+    <div class="form-group">
+      <label for="fecha">Fecha de Reparto</label>
+      <input type="date" class="form-control" id="fecha" name="fecha" required>
+    </div>
+    <div class="form-group">
+      <label for="observaciones">Observaciones</label>
+      <textarea class="form-control" id="observaciones" name="observaciones"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Crear Reparto</button>
+  </form>
+</div>
+{% endblock %}

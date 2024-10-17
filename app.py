@@ -53,6 +53,15 @@ class Comment(db.Model):
     user = db.relationship('User', backref=db.backref('comments', lazy=True))
     message = db.relationship('Message', backref=db.backref('comments', lazy=True))
 
+class Delivery(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    client_name = db.Column(db.String(200), nullable=False)
+    delivery_date = db.Column(db.DateTime, nullable=False)
+    items_delivered = db.Column(db.String(500), nullable=False)
+    notes = db.Column(db.Text, nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user = db.relationship('User', backref=db.backref('deliveries', lazy=True))
+
 def role_required(roles):
     def decorator(f):
         @wraps(f)
@@ -124,6 +133,39 @@ def gestion_usuarios():
             flash('Datos del usuario actualizados exitosamente.')
     users = User.query.all()
     return render_template('gestion_usuarios.html', users=users, title="Gestión de Usuarios")
+
+@app.route('/gestion_repartos', methods=['GET', 'POST'])
+@login_required
+@role_required(['developer', 'master'])
+def gestion_repartos():
+    if request.method == 'POST':
+        delivery_id = request.form.get('delivery_id')
+        if delivery_id:
+            # Editar entrega existente
+            delivery = Delivery.query.get(delivery_id)
+            if delivery:
+                if 'client_name' in request.form:
+                    delivery.client_name = request.form['client_name']
+                if 'delivery_date' in request.form:
+                    delivery.delivery_date = datetime.strptime(request.form['delivery_date'], '%Y-%m-%d')
+                if 'items_delivered' in request.form:
+                    delivery.items_delivered = request.form['items_delivered']
+                if 'notes' in request.form:
+                    delivery.notes = request.form['notes']
+                db.session.commit()
+                flash('Reparto actualizado exitosamente.')
+        else:
+            # Crear nueva entrega
+            client_name = request.form['client_name']
+            delivery_date = datetime.strptime(request.form['delivery_date'], '%Y-%m-%d')
+            items_delivered = request.form['items_delivered']
+            notes = request.form.get('notes', '')
+            new_delivery = Delivery(client_name=client_name, delivery_date=delivery_date, items_delivered=items_delivered, notes=notes, user_id=current_user.id)
+            db.session.add(new_delivery)
+            db.session.commit()
+            flash('Reparto creado exitosamente.')
+    deliveries = Delivery.query.all()
+    return render_template('gestion_repartos.html', deliveries=deliveries, title="Gestión de Repartos")
 
 @app.route('/message/<int:message_id>', methods=['GET', 'POST'])
 def message_detail(message_id):
