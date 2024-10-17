@@ -116,8 +116,12 @@ def gestion_usuarios():
                 user.role = 'employee'
             elif 'role_client' in request.form:
                 user.role = 'client'
+            if 'email' in request.form:
+                user.email = request.form['email']
+            if 'phone_number' in request.form:
+                user.phone_number = request.form['phone_number']
             db.session.commit()
-            flash('Rol del usuario actualizado exitosamente.')
+            flash('Datos del usuario actualizados exitosamente.')
     users = User.query.all()
     return render_template('gestion_usuarios.html', users=users, title="Gestión de Usuarios")
 
