@@ -16,6 +16,9 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
+# Inicializar la base de datos y las migraciones
+# db: Objeto para interactuar con la base de datos
+# migrate: Herramienta para manejar migraciones de la base de datos
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 login_manager = LoginManager(app)
@@ -23,8 +26,10 @@ login_manager.login_view = 'login'
 
 @login_manager.user_loader
 def load_user(user_id):
+    # Cargar un usuario desde la base de datos según su ID
     return User.query.get(int(user_id))
 
+# Modelo de Usuario
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
@@ -33,6 +38,7 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(200), nullable=False)
     role = db.Column(db.String(20), default='client')  # Campo para el rol del usuario
 
+# Modelo de Mensaje
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
@@ -43,6 +49,7 @@ class Message(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user = db.relationship('User', backref=db.backref('messages', lazy=True))
 
+# Modelo de Comentario
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.Text, nullable=False)
@@ -53,6 +60,7 @@ class Comment(db.Model):
     user = db.relationship('User', backref=db.backref('comments', lazy=True))
     message = db.relationship('Message', backref=db.backref('comments', lazy=True))
 
+# Modelo de Reparto
 class Delivery(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     client_name = db.Column(db.String(200), nullable=False)
@@ -62,61 +70,75 @@ class Delivery(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user = db.relationship('User', backref=db.backref('deliveries', lazy=True))
 
+# Decorador para roles específicos
 def role_required(roles):
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
+            # Verificar si el usuario tiene el rol requerido
             if current_user.role not in roles:
                 return redirect(url_for('login'))
             return f(*args, **kwargs)
         return decorated_function
     return decorator
 
+# Antes de cada solicitud, configurar si se muestra el enlace de administrador
 @app.before_request
 def before_request():
     g.show_admin_link = current_user.is_authenticated and current_user.role in ['developer', 'master']
 
+# Ruta para la página principal
 @app.route('/')
 def home():
     if not current_user.is_authenticated:
         return redirect(url_for('login'))
     return render_template('home.html', title="Soderia Aparicio")
 
+# Ruta para noticias
 @app.route('/news')
 def news():
     return render_template('news.html', title="Soderia Aparicio - Noticias")
 
+# Ruta para el foro
 @app.route('/foro')
 def foro():
+    # Obtener todos los mensajes del foro, ordenados por fecha
     messages = Message.query.order_by(Message.timestamp.desc()).all()
     return render_template('foro.html', messages=messages, title="Foro")
 
+# Ruta para postear en el foro
 @app.route('/postear', methods=['GET', 'POST'])
 @login_required
 def postear():
     if request.method == 'POST':
+        # Obtener los datos del formulario de publicación
         title = request.form['title']
         message_text = request.form['message']
         signature = request.form['signature']
         ip_address = request.remote_addr
         user_id = current_user.id
+        # Verificar que todos los campos estén completos
         if not title or not message_text or not signature:
             flash('Todos los campos son obligatorios')
         else:
+            # Crear un nuevo mensaje y guardarlo en la base de datos
             message = Message(title=title, message=message_text, signature=signature, ip_address=ip_address, user_id=user_id)
             db.session.add(message)
             db.session.commit()
             return redirect(url_for('foro'))
     return render_template('postear.html', title="Postear")
 
+# Ruta para gestionar usuarios
 @app.route('/gestion_usuarios', methods=['GET', 'POST'])
 @login_required
 @role_required(['developer', 'master'])
 def gestion_usuarios():
     if request.method == 'POST':
+        # Obtener el usuario a modificar
         user_id = request.form['user_id']
         user = User.query.get(user_id)
         if user:
+            # Actualizar rol del usuario según el rol del usuario actual
             if 'role_developer' in request.form and current_user.role == 'developer':
                 user.role = 'developer'
             elif 'role_master' in request.form and current_user.role in ['developer', 'master']:
@@ -125,6 +147,7 @@ def gestion_usuarios():
                 user.role = 'employee'
             elif 'role_client' in request.form:
                 user.role = 'client'
+            # Actualizar email y número de teléfono del usuario
             if 'email' in request.form:
                 user.email = request.form['email']
             if 'phone_number' in request.form:
@@ -134,6 +157,7 @@ def gestion_usuarios():
     users = User.query.all()
     return render_template('gestion_usuarios.html', users=users, title="Gestión de Usuarios")
 
+# Ruta para gestionar repartos
 @app.route('/gestion_repartos', methods=['GET', 'POST'])
 @login_required
 @role_required(['developer', 'master'])
@@ -144,6 +168,7 @@ def gestion_repartos():
             # Editar entrega existente
             delivery = Delivery.query.get(delivery_id)
             if delivery:
+                # Actualizar los datos del reparto existente
                 if 'client_name' in request.form:
                     delivery.client_name = request.form['client_name']
                 if 'delivery_date' in request.form:
@@ -160,13 +185,16 @@ def gestion_repartos():
             delivery_date = datetime.strptime(request.form['delivery_date'], '%Y-%m-%d')
             items_delivered = request.form['items_delivered']
             notes = request.form.get('notes', '')
+            # Crear un nuevo reparto y guardarlo en la base de datos
             new_delivery = Delivery(client_name=client_name, delivery_date=delivery_date, items_delivered=items_delivered, notes=notes, user_id=current_user.id)
             db.session.add(new_delivery)
             db.session.commit()
             flash('Reparto creado exitosamente.')
+    # Obtener todos los repartos existentes
     deliveries = Delivery.query.all()
     return render_template('gestion_repartos.html', deliveries=deliveries, title="Gestión de Repartos")
 
+# Ruta para mostrar detalles de un mensaje
 @app.route('/message/<int:message_id>', methods=['GET', 'POST'])
 def message_detail(message_id):
     message = Message.query.get_or_404(message_id)
@@ -177,6 +205,7 @@ def message_detail(message_id):
             return redirect(url_for('login'))
         text = request.form['text']
         ip_address = request.remote_addr
+        # Crear un nuevo comentario y guardarlo en la base de datos
         new_comment = Comment(text=text, ip_address=ip_address, user_id=current_user.id, message_id=message.id)
         db.session.add(new_comment)
         db.session.commit()
@@ -185,28 +214,33 @@ def message_detail(message_id):
         return redirect(url_for('message_detail', message_id=message.id, _anchor=f'comment-{highlighted_comment_id}'))
     return render_template('message_detail.html', message=message, highlighted_comment_id=highlighted_comment_id)
 
+# Ruta para videos
 @app.route('/videos')
 def videos():
     return render_template('videos.html')
 
+# Ruta para iniciar sesión
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
         user = User.query.filter_by(username=username).first()
+        # Verificar la contraseña del usuario
         if user and check_password_hash(user.password, password):
             login_user(user)
             return redirect(url_for('foro'))
         flash('Nombre de usuario o contraseña incorrectos')
     return render_template('login.html', title="Login")
 
+# Ruta para cerrar sesión
 @app.route('/logout')
 @login_required
 def logout():
     logout_user()
     return redirect(url_for('home'))
 
+# Ruta para registrar un nuevo usuario
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -233,11 +267,13 @@ def register():
 
     return render_template('register.html', title="Register")
 
+# Ruta para el perfil del usuario
 @app.route('/perfil')
 @login_required
 def perfil():
     return render_template('perfil.html', user=current_user, title="Perfil del Usuario")
 
+# Ruta para editar el perfil del usuario
 @app.route('/perfil/editar', methods=['GET', 'POST'])
 @login_required
 def editar_perfil():

@@ -211,6 +211,10 @@
                         <li class="nav-item{% if request.endpoint == 'gestion_usuarios' %} active{% endif %}">
                             <a class="nav-link{% if request.endpoint == 'gestion_usuarios' %} active{% endif %}" href="{{ url_for('gestion_usuarios') }}">Gestión de Usuarios</a>
                         </li>
+                        <!-- Enlace para Gestión de Repartos, visible solo para master y desarrolladores -->
+                        <li class="nav-item{% if request.endpoint == 'gestion_repartos' %} active{% endif %}">
+                            <a class="nav-link{% if request.endpoint == 'gestion_repartos' %} active{% endif %}" href="{{ url_for('gestion_repartos') }}">Gestión de Repartos</a>
+                        </li>
                     {% endif %}
                     <!-- Mensaje de bienvenida con el nombre del usuario -->
                     <li class="nav-item">
