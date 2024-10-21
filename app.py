@@ -11,26 +11,28 @@ from functools import wraps
 # Cargar variables de entorno desde el archivo .env
 load_dotenv()
 
+# Inicializar la aplicación Flask
 app = Flask(__name__)
+# Configurar la base de datos usando variables de entorno
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
 # Inicializar la base de datos y las migraciones
-# db: Objeto para interactuar con la base de datos
-# migrate: Herramienta para manejar migraciones de la base de datos
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+
+# Configuración de gestión de inicio de sesión
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
-@login_manager.user_loader
+# Cargar usuario según su ID
 def load_user(user_id):
-    # Cargar un usuario desde la base de datos según su ID
     return User.query.get(int(user_id))
 
 # Modelo de Usuario
 class User(UserMixin, db.Model):
+    # Definición de columnas para la tabla de usuarios
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
@@ -40,6 +42,7 @@ class User(UserMixin, db.Model):
 
 # Modelo de Mensaje
 class Message(db.Model):
+    # Definición de columnas para la tabla de mensajes
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
     message = db.Column(db.Text, nullable=False)
@@ -51,6 +54,7 @@ class Message(db.Model):
 
 # Modelo de Comentario
 class Comment(db.Model):
+    # Definición de columnas para la tabla de comentarios
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.Text, nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
@@ -62,6 +66,7 @@ class Comment(db.Model):
 
 # Modelo de Reparto
 class Delivery(db.Model):
+    # Definición de columnas para la tabla de repartos
     id = db.Column(db.Integer, primary_key=True)
     client_name = db.Column(db.String(200), nullable=False)
     delivery_date = db.Column(db.DateTime, nullable=False)
@@ -70,7 +75,7 @@ class Delivery(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user = db.relationship('User', backref=db.backref('deliveries', lazy=True))
 
-# Decorador para roles específicos
+# Decorador para verificar roles específicos de usuarios
 def role_required(roles):
     def decorator(f):
         @wraps(f)
@@ -90,6 +95,7 @@ def before_request():
 # Ruta para la página principal
 @app.route('/')
 def home():
+    # Redirigir al login si el usuario no está autenticado
     if not current_user.is_authenticated:
         return redirect(url_for('login'))
     return render_template('home.html', title="Soderia Aparicio")
@@ -197,6 +203,7 @@ def gestion_repartos():
 # Ruta para mostrar detalles de un mensaje
 @app.route('/message/<int:message_id>', methods=['GET', 'POST'])
 def message_detail(message_id):
+    # Obtener el mensaje por su ID o devolver un error 404 si no existe
     message = Message.query.get_or_404(message_id)
     highlighted_comment_id = None
     if request.method == 'POST':

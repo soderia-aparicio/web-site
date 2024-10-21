@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, MetaData, Table
+from sqlalchemy import create_engine, MetaData, Table, text
 from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
 import os
@@ -20,45 +20,76 @@ metadata.reflect(bind=engine)
 Session = sessionmaker(bind=engine)
 session = Session()
 
+# Función para listar las tablas disponibles
 def listar_tablas():
     tablas = metadata.tables.keys()
     for i, tabla in enumerate(tablas, start=1):
         print(f"{i}. {tabla}")
     return list(tablas)
 
+# Función para eliminar los registros de una tabla específica
 def eliminar_registros(tabla):
     try:
-        session.execute(tabla.delete())
+        # Usar TRUNCATE para eliminar todos los registros de la tabla con CASCADE
+        tabla_name = f'"{tabla.name}"'  # Rodear con comillas dobles para evitar palabras reservadas
+        session.execute(text(f'TRUNCATE TABLE {tabla_name} CASCADE'))
         session.commit()
         print(f"Todos los registros de la tabla '{tabla.name}' han sido eliminados.")
     except Exception as e:
         session.rollback()
         print(f"Error al eliminar los registros: {e}")
 
+# Función para limpiar todas las tablas manteniendo las dependencias
+def limpiar_todas_las_tablas():
+    try:
+        # Obtener los nombres de todas las tablas y ordenar según las dependencias
+        tablas = list(metadata.tables.keys())
+        
+        # Usar TRUNCATE para eliminar todas las tablas con CASCADE
+        for nombre_tabla in tablas:
+            tabla = Table(nombre_tabla, metadata, autoload_with=engine)
+            eliminar_registros(tabla)
+
+        print("Todas las tablas han sido limpiadas con éxito.")
+    except Exception as e:
+        session.rollback()
+        print(f"Error al limpiar las tablas: {e}")
+
+# Función principal para ejecutar el script
 def main():
-    print("Tablas disponibles en la base de datos:")
-    tablas = listar_tablas()
+    print("Seleccione una opción:")
+    print("1. Limpiar una tabla específica")
+    print("2. Limpiar todas las tablas")
 
     try:
-        seleccion = int(input("Ingrese el número de la tabla que desea limpiar: "))
-        if 1 <= seleccion <= len(tablas):
-            tabla_seleccionada = Table(tablas[seleccion - 1], metadata, autoload_with=engine)
-            
-            confirmacion = input(f"Está a punto de eliminar todos los registros de la tabla '{tabla_seleccionada.name}'. "
+        opcion = int(input("Ingrese el número de la opción que desea realizar: "))
+
+        if opcion == 1:
+            tablas = listar_tablas()
+            seleccion = int(input("Ingrese el número de la tabla que desea limpiar: "))
+            if 1 <= seleccion <= len(tablas):
+                tabla_seleccionada = Table(tablas[seleccion - 1], metadata, autoload_with=engine)
+                
+                confirmacion = input(f"Está a punto de eliminar todos los registros de la tabla '{tabla_seleccionada.name}'. "
+                                     "Esta acción no se puede deshacer. Escriba 'si, quiero borrar' para confirmar: ")
+                if confirmacion == "si, quiero borrar":
+                    eliminar_registros(tabla_seleccionada)
+                else:
+                    print("Operación cancelada.")
+            else:
+                print("Selección inválida. Por favor, intente nuevamente.")
+
+        elif opcion == 2:
+            confirmacion = input("Está a punto de eliminar todos los registros de TODAS las tablas. "
                                  "Esta acción no se puede deshacer. Escriba 'si, quiero borrar' para confirmar: ")
             if confirmacion == "si, quiero borrar":
-                # Eliminar registros de las tablas dependientes primero
-                if tabla_seleccionada.name == 'user':
-                    # Eliminar registros de 'comment' y 'message' que dependen de 'user'
-                    comment_table = Table('comment', metadata, autoload_with=engine)
-                    eliminar_registros(comment_table)
-                    message_table = Table('message', metadata, autoload_with=engine)
-                    eliminar_registros(message_table)
-                eliminar_registros(tabla_seleccionada)
+                limpiar_todas_las_tablas()
             else:
                 print("Operación cancelada.")
+
         else:
-            print("Selección inválida. Por favor, intente nuevamente.")
+            print("Opción inválida. Por favor, intente nuevamente.")
+
     except ValueError:
         print("Entrada inválida. Por favor, ingrese un número.")
     finally:
