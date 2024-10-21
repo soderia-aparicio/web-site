@@ -9,3 +9,4 @@ sqlalchemy==2.0.10  # ORM para bases de datos SQL
 pg8000==1.29.3  # Controlador PostgreSQL para Python, evita problemas de compilación de psycopg2
 setuptools==75.2.0  # Herramienta necesaria para resolver dependencias de construcción
 numpy==1.23.5  # Biblioteca para el cálculo numérico
+wheel==0.40.0  # Utilizado para construir paquetes binarios
