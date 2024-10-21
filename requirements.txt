@@ -1,28 +1,37 @@
-# Dependencias del proyecto
+# Archivo requirements.txt con todas las dependencias necesarias para el proyecto
 
-# Flask - Framework principal de la aplicación web
-flask==2.0.1
+# Framework principal de la aplicación
+flask==2.0.1  # Framework web ligero y fácil de usar para Python
 
-# Flask-SQLAlchemy - ORM para interactuar con la base de datos
-flask_sqlalchemy==2.5.1
+# Extensión para la integración con bases de datos SQLAlchemy en Flask
+flask_sqlalchemy==2.5.1  # Extensión de SQLAlchemy específica para Flask para manejar la ORM
 
-# Flask-Migrate - Extensión para realizar migraciones en la base de datos
-flask_migrate==3.1.0
+# Herramienta para manejar migraciones de base de datos con SQLAlchemy
+flask_migrate==3.1.0  # Extensión para manejar migraciones de bases de datos en Flask
 
-# Flask-Login - Manejo de sesiones y autenticación de usuarios
-flask_login==0.5.0
+# Extensión para gestionar autenticación de usuarios en Flask
+flask_login==0.5.0  # Extensión para manejar inicios de sesión de usuarios
 
-# python-dotenv - Cargar variables de entorno desde un archivo .env
-python-dotenv==0.19.0
+# Biblioteca para cargar variables de entorno desde archivos .env
+python-dotenv==0.19.0  # Biblioteca para cargar variables de entorno desde un archivo .env
 
-# Werkzeug - Herramientas de WSGI utilizadas para el manejo de contraseñas y otros elementos
-werkzeug==2.0.1
+# Biblioteca para proporcionar funcionalidades adicionales al manejo de WSGI (Web Server Gateway Interface)
+werkzeug==2.0.1  # Herramienta para manejar el servidor subyacente en Flask
 
-# pandas - Librería para el análisis de datos y exportación a Excel (usada para extractos de clientes)
-pandas==1.3.3
+# Biblioteca para el manejo y análisis de datos
+pandas==1.3.3  # Biblioteca potente para análisis de datos y manipulación de estructuras de datos como DataFrames
 
-# SQLAlchemy - Biblioteca de base de datos SQL utilizada por Flask-SQLAlchemy
-sqlalchemy==1.4.22
+# ORM (Object Relational Mapper) utilizado para interactuar con bases de datos SQL
+sqlalchemy==1.4.22  # SQLAlchemy es la base de Flask-SQLAlchemy y permite interacciones con bases de datos SQL
 
-# psycopg2-binary - Conector para PostgreSQL, necesario para la conexión con la base de datos
-psycopg2-binary==2.9.1
+# Controlador PostgreSQL para Python
+psycopg2-binary==2.9.1  # Controlador para interactuar con bases de datos PostgreSQL
+
+# Herramienta necesaria para resolver las dependencias de construcción como `distutils`
+setuptools==75.2.0  # Proporciona herramientas para encontrar e instalar paquetes Python. Se requiere para manejar algunas dependencias como `distutils`
+
+# Biblioteca requerida por Pandas para el cálculo numérico
+numpy==1.21.2  # Requerida por pandas. Fijada a una versión compatible para evitar problemas en la instalación
+
+# Cython es requerido en algunos casos por las dependencias de `pandas`
+Cython==0.29.37  # Proporciona capacidades de compilación y optimización para las bibliotecas que lo necesitan
