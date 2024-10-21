@@ -24,8 +24,8 @@ pandas==1.5.3  # Versión reciente para mejorar la compatibilidad con Python 3.1
 # ORM (Object Relational Mapper) utilizado para interactuar con bases de datos SQL
 sqlalchemy==2.0.10  # Versión estable y más reciente para mejorar la integración con Flask-SQLAlchemy
 
-# Controlador PostgreSQL para Python
-psycopg2-binary==2.9.6  # Paquete binario para interactuar con bases de datos PostgreSQL, evita problemas de compilación
+# Controlador PostgreSQL para Python, completamente en Python (evita problemas de compilación)
+pg8000==1.29.3  # Utiliza pg8000 para interactuar con bases de datos PostgreSQL sin dependencias nativas complicadas
 
 # Herramienta necesaria para resolver las dependencias de construcción
 setuptools==75.2.0  # Necesario para manejar la construcción de dependencias como distutils
