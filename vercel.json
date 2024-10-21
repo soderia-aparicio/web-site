@@ -15,5 +15,6 @@
     "env": {
       "PYTHON_VERSION": "3.10"
     }
-  }
+  },
+  "installCommand": "pip install psycopg2-binary"
 }
