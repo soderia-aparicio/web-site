@@ -249,6 +249,7 @@ def logout():
     return redirect(url_for('home'))
 
 # Ruta para registrar un nuevo usuario
+# Ruta para registrar un nuevo usuario
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -265,11 +266,18 @@ def register():
 
         # Crear un nuevo usuario con los datos ingresados
         hashed_password = generate_password_hash(password, method='sha256')
-        new_user = User(username=username, email=email, phone_number=phone_number, password=hashed_password)
+        new_user = User(username=username, email=email, phone_number=phone_number, password=hashed_password, role='client')
 
         # Agregar el nuevo usuario a la base de datos
         db.session.add(new_user)
         db.session.commit()
+
+        # Si el usuario es del tipo empleado, iniciar sesión automáticamente
+        if new_user.role == 'employee':
+            login_user(new_user)
+            flash('Registro exitoso y has sido logueado automáticamente.', 'success')
+            return redirect(url_for('home'))
+        
         flash('Registration successful! Please login.', 'success')
         return redirect(url_for('login'))
 
