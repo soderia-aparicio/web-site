@@ -25,7 +25,7 @@ pandas==1.5.3  # Versión reciente para mejorar la compatibilidad con Python 3.1
 sqlalchemy==2.0.10  # Versión estable y más reciente para mejorar la integración con Flask-SQLAlchemy
 
 # Controlador PostgreSQL para Python
-psycopg2==2.9.6  # Controlador para interactuar con bases de datos PostgreSQL, reemplaza a psycopg2-binary para evitar problemas de compilación
+psycopg2-binary==2.9.6  # Paquete binario para interactuar con bases de datos PostgreSQL, evita problemas de compilación
 
 # Herramienta necesaria para resolver las dependencias de construcción
 setuptools==75.2.0  # Necesario para manejar la construcción de dependencias como distutils
