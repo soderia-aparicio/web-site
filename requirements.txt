@@ -28,7 +28,7 @@ sqlalchemy==2.0.10  # Versión estable y más reciente para mejorar la integraci
 pg8000==1.29.3  # Utiliza pg8000 para interactuar con bases de datos PostgreSQL sin dependencias nativas complicadas
 
 # Herramienta necesaria para resolver las dependencias de construcción
-setuptools==75.2.0  # Necesario para manejar la construcción de dependencias como distutils
+setuptools==75.2.0  # Necesario para manejar la construcción de dependencias y resolver problemas con distutils
 
 # Biblioteca requerida por Pandas para el cálculo numérico
 numpy==1.23.5  # Versión compatible con pandas y Python 3.12
@@ -38,3 +38,6 @@ Cython==0.29.36  # Cython es necesario para la compilación de ciertas partes de
 
 # wheel es necesario para la instalación de paquetes binarios
 wheel==0.40.0  # Utilizado para construir paquetes binarios
+
+# Distutils es requerido para el proceso de construcción de ciertos paquetes y compilaciones.
+distutils==3.12.0  # Se agrega para garantizar que `setuptools` y otras compilaciones se puedan llevar a cabo sin errores.
