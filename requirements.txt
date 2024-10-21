@@ -1,40 +1,11 @@
-# Archivo requirements.txt actualizado con todas las dependencias necesarias para el proyecto
-
-# Framework principal de la aplicación
-flask==2.2.2  # Versión más reciente que garantiza estabilidad en Python >= 3.10
-
-# Extensión para la integración con bases de datos SQLAlchemy en Flask
-flask_sqlalchemy==3.0.3  # Versión más reciente y estable para SQLAlchemy en Flask
-
-# Herramienta para manejar migraciones de base de datos con SQLAlchemy
-flask_migrate==4.0.3  # Actualizado para evitar problemas de compatibilidad con nuevas versiones de SQLAlchemy
-
-# Extensión para gestionar autenticación de usuarios en Flask
-flask_login==0.6.2  # Versión actualizada que incluye mejoras de seguridad y soporte para Python 3.12
-
-# Biblioteca para cargar variables de entorno desde archivos .env
-python-dotenv==1.0.0  # Versión más reciente para garantizar compatibilidad con versiones actuales de Flask
-
-# Biblioteca para proporcionar funcionalidades adicionales al manejo de WSGI (Web Server Gateway Interface)
-werkzeug==2.2.2  # Versión que asegura compatibilidad con la versión actual de Flask
-
-# Biblioteca para el manejo y análisis de datos
-pandas==1.5.3  # Versión reciente para mejorar la compatibilidad con Python 3.12 y evitar errores de instalación
-
-# ORM (Object Relational Mapper) utilizado para interactuar con bases de datos SQL
-sqlalchemy==2.0.10  # Versión estable y más reciente para mejorar la integración con Flask-SQLAlchemy
-
-# Controlador PostgreSQL para Python (versión binaria precompilada para evitar problemas de compilación)
-psycopg2-binary==2.9.6  # Controlador PostgreSQL para Python, versión precompilada
-
-# Herramienta necesaria para resolver las dependencias de construcción
-setuptools==75.2.0  # Necesario para manejar la construcción de dependencias y resolver problemas con distutils
-
-# Biblioteca requerida por Pandas para el cálculo numérico
-numpy==1.23.5  # Versión compatible con pandas y Python 3.12
-
-# Cython es requerido en algunos casos por las dependencias de pandas
-Cython==0.29.36  # Cython es necesario para la compilación de ciertas partes de Pandas
-
-# wheel es necesario para la instalación de paquetes binarios
-wheel==0.40.0  # Utilizado para construir paquetes binarios
+flask==2.2.2  # Framework principal de la aplicación
+flask_sqlalchemy==3.0.3  # Extensión para la integración con bases de datos SQLAlchemy en Flask
+flask_migrate==4.0.3  # Manejo de migraciones de base de datos con SQLAlchemy
+flask_login==0.6.2  # Autenticación de usuarios en Flask
+python-dotenv==1.0.0  # Carga de variables de entorno desde archivos .env
+werkzeug==2.2.2  # Proporciona funcionalidades adicionales para WSGI
+pandas==1.5.3  # Manejo y análisis de datos
+sqlalchemy==2.0.10  # ORM para bases de datos SQL
+pg8000==1.29.3  # Controlador PostgreSQL para Python, evita problemas de compilación de psycopg2
+setuptools==75.2.0  # Herramienta necesaria para resolver dependencias de construcción
+numpy==1.23.5  # Biblioteca para el cálculo numérico
