@@ -1,0 +1,54 @@
+{% extends "base.html" %}  <!-- Extiende la plantilla base -->
+
+{% block content %}  <!-- Bloque para el contenido específico de esta página -->
+<div class="container mt-4">
+    <h1 class="title text-center mb-4">Extracto del Cliente: {{ client.username }}</h1>
+
+    <!-- Formulario para filtrar el extracto por fechas -->
+    <form method="POST" action="{{ url_for('obtener_extracto_cliente', client_id=client.id) }}" class="mb-4">
+        <div class="form-row">
+            <div class="form-group col-md-5">
+                <label for="fecha_inicio">Fecha de Inicio</label>
+                <input type="date" class="form-control" id="fecha_inicio" name="fecha_inicio" required>
+            </div>
+            <div class="form-group col-md-5">
+                <label for="fecha_fin">Fecha de Fin</label>
+                <input type="date" class="form-control" id="fecha_fin" name="fecha_fin" required>
+            </div>
+            <div class="form-group col-md-2 align-self-end">
+                <button type="submit" class="btn btn-primary">Buscar</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Sección para mostrar los repartos encontrados -->
+    {% if deliveries %}
+    <h2 class="mb-3">Repartos Encontrados</h2>
+    <table class="table table-dark table-hover">
+        <thead>
+            <tr>
+                <th>Fecha de Entrega</th>
+                <th>Ítems Entregados</th>
+                <th>Notas</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for delivery in deliveries %}
+            <tr>
+                <td>{{ delivery.delivery_date.strftime('%Y-%m-%d') }}</td>
+                <td>{{ delivery.items_delivered }}</td>
+                <td>{{ delivery.notes }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Botón para descargar el extracto en Excel -->
+    <form method="POST" action="{{ url_for('descargar_extracto_cliente', client_id=client.id) }}">
+        <input type="hidden" name="fecha_inicio" value="{{ request.form.fecha_inicio }}">
+        <input type="hidden" name="fecha_fin" value="{{ request.form.fecha_fin }}">
+        <button type="submit" class="btn btn-success">Descargar Extracto en Excel</button>
+    </form>
+    {% endif %}
+</div>
+{% endblock %}

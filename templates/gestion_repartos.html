@@ -48,10 +48,19 @@
                 <td>{{ delivery.notes }}</td>
                 <td>
                     <!-- Formulario para editar un reparto existente -->
+                    {% if current_user.role in ['developer', 'master', 'employee'] %}
                     <form method="POST" action="{{ url_for('gestion_repartos') }}" class="d-inline">
                         <input type="hidden" name="delivery_id" value="{{ delivery.id }}">
                         <button type="submit" class="btn btn-warning btn-sm">Editar</button>
                     </form>
+                    {% endif %}
+                    <!-- Formulario para eliminar un reparto existente -->
+                    {% if current_user.role in ['developer', 'master'] %}
+                    <form method="POST" action="{{ url_for('eliminar_reparto') }}" class="d-inline" onsubmit="return confirm('¿Está seguro que desea eliminar este reparto? Esta acción no se puede deshacer.');">
+                        <input type="hidden" name="delivery_id" value="{{ delivery.id }}">
+                        <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                    </form>
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}
