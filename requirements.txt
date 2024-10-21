@@ -24,8 +24,8 @@ pandas==1.5.3  # Versión reciente para mejorar la compatibilidad con Python 3.1
 # ORM (Object Relational Mapper) utilizado para interactuar con bases de datos SQL
 sqlalchemy==2.0.10  # Versión estable y más reciente para mejorar la integración con Flask-SQLAlchemy
 
-# Controlador PostgreSQL para Python, completamente en Python (evita problemas de compilación)
-pg8000==1.29.3  # Utiliza pg8000 para interactuar con bases de datos PostgreSQL sin dependencias nativas complicadas
+# Controlador PostgreSQL para Python (versión binaria precompilada para evitar problemas de compilación)
+psycopg2-binary==2.9.6  # Versión precompilada para evitar la necesidad de `pg_config`
 
 # Herramienta necesaria para resolver las dependencias de construcción
 setuptools==75.2.0  # Necesario para manejar la construcción de dependencias y resolver problemas con distutils
@@ -38,6 +38,3 @@ Cython==0.29.36  # Cython es necesario para la compilación de ciertas partes de
 
 # wheel es necesario para la instalación de paquetes binarios
 wheel==0.40.0  # Utilizado para construir paquetes binarios
-
-# Distutils es requerido para el proceso de construcción de ciertos paquetes y compilaciones.
-distutils==3.12.0  # Se agrega para garantizar que `setuptools` y otras compilaciones se puedan llevar a cabo sin errores.
