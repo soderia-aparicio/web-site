@@ -1,12 +1,29 @@
-flask==2.2.2  # Framework principal de la aplicación
-flask_sqlalchemy==3.0.3  # Extensión para la integración con bases de datos SQLAlchemy en Flask
-flask_migrate==4.0.3  # Manejo de migraciones de base de datos con SQLAlchemy
-flask_login==0.6.2  # Autenticación de usuarios en Flask
-python-dotenv==1.0.0  # Carga de variables de entorno desde archivos .env
-werkzeug==2.2.2  # Proporciona funcionalidades adicionales para WSGI
-pandas==1.5.3  # Manejo y análisis de datos
-sqlalchemy==2.0.10  # ORM para bases de datos SQL
-pg8000==1.29.3  # Controlador PostgreSQL para Python, evita problemas de compilación de psycopg2
-setuptools==75.2.0  # Herramienta necesaria para resolver dependencias de construcción
-numpy==1.23.5  # Biblioteca para el cálculo numérico
-wheel==0.40.0  # Utilizado para construir paquetes binarios
+# Flask framework
+Flask==2.0.3
+
+# Extensions for Flask
+Flask-SQLAlchemy==2.5.1
+SQLAlchemy==1.4.32
+Flask-Migrate==3.1.0  # Versión fija de Flask-Migrate para evitar conflictos
+flask_bcrypt==0.7.1  # Flask extension for Bcrypt hashing
+Flask-Login==0.5.0  # Flask extension for user session management
+
+# PostgreSQL database adapter for Python
+psycopg2-binary==2.9.6  # Añadimos una versión específica que es más estable y reciente
+
+# Template engine
+Jinja2==3.1.4
+
+# Various utilities
+click==8.1.7
+itsdangerous==2.1.2
+MarkupSafe==2.1.1
+typing_extensions==4.12.1
+Werkzeug==2.0.3  # Especifica solo una versión de Werkzeug para evitar conflictos
+
+# For loading environment variables from .env file
+python-dotenv==0.19.0
+
+# Paquetes adicionales para asegurar que las dependencias de construcción estén completas
+setuptools>=65.5.0
+wheel
