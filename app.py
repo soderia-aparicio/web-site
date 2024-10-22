@@ -207,11 +207,13 @@ def obtener_extracto_cliente(client_id):
 
     return render_template('extracto_cliente.html', client=client, deliveries=deliveries)
 
-# Ruta para descargar extracto de cliente en Excel (formato CSV)
+# Ruta para descargar extracto de cliente en Excel
 @app.route('/cliente/extracto/descargar/<int:client_id>', methods=['POST'])
 @login_required
 @role_required(['developer', 'master', 'employee'])
 def descargar_extracto_cliente(client_id):
+    import csv
+
     client = User.query.get_or_404(client_id)
     fecha_inicio = request.form.get('fecha_inicio')
     fecha_fin = request.form.get('fecha_fin')
@@ -240,13 +242,13 @@ def descargar_extracto_cliente(client_id):
     csv_path = f"/tmp/extracto_cliente_{client.username}_{fecha_inicio}_{fecha_fin}.csv"
     fieldnames = ['Fecha de Entrega', 'Ítems Entregados', 'Notas']
 
-    with open(csv_path, mode='w', newline='') as csv_file:
+    with open(csv_path, mode='w', newline='', encoding='utf-8') as csv_file:
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-
+        
         # Escribir encabezados
         writer.writeheader()
 
-        # Escribir datos de cada entrega
+        # Escribir los datos
         for delivery in deliveries:
             writer.writerow({
                 'Fecha de Entrega': delivery.delivery_date.strftime('%Y-%m-%d'),
