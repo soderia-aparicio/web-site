@@ -9,7 +9,9 @@ flask_bcrypt==0.7.1  # Flask extension for Bcrypt hashing
 Flask-Login==0.5.0  # Flask extension for user session management
 
 # PostgreSQL database adapter for Python
-psycopg2-binary==2.9.6  # Añadimos una versión específica que es más estable y reciente
+# psycopg2-binary==2.9.6  # Añadimos una versión específica que es más estable y reciente
+pg8000==1.29.3
+psycopg2-binary==2.8.6
 
 # Template engine
 Jinja2==3.1.4
@@ -26,4 +28,5 @@ python-dotenv==0.19.0
 
 # Paquetes adicionales para asegurar que las dependencias de construcción estén completas
 setuptools>=65.5.0
-wheel
+wheel>=0.40.0
+
