@@ -207,13 +207,11 @@ def obtener_extracto_cliente(client_id):
 
     return render_template('extracto_cliente.html', client=client, deliveries=deliveries)
 
-# Ruta para descargar extracto de cliente en Excel
+# Ruta para descargar extracto de cliente en CSV
 @app.route('/cliente/extracto/descargar/<int:client_id>', methods=['POST'])
 @login_required
 @role_required(['developer', 'master', 'employee'])
 def descargar_extracto_cliente(client_id):
-    import csv
-
     client = User.query.get_or_404(client_id)
     fecha_inicio = request.form.get('fecha_inicio')
     fecha_fin = request.form.get('fecha_fin')
@@ -258,57 +256,6 @@ def descargar_extracto_cliente(client_id):
 
     # Enviar el archivo al cliente para su descarga
     return send_file(csv_path, as_attachment=True, download_name=f"Extracto_{client.username}_{fecha_inicio}_{fecha_fin}.csv")
-
-
-# Ruta para descargar extracto de cliente
-@app.route('/cliente/extracto/descargar/<int:client_id>', methods=['POST'])
-@login_required
-@role_required(['developer', 'master', 'employee'])
-def descargar_extracto_cliente(client_id):
-    client = User.query.get_or_404(client_id)
-    fecha_inicio = request.form.get('fecha_inicio')
-    fecha_fin = request.form.get('fecha_fin')
-
-    if not fecha_inicio or not fecha_fin:
-        flash('Por favor ingrese ambas fechas.', 'danger')
-        return redirect(url_for('obtener_extracto_cliente', client_id=client.id))
-
-    # Convertir las fechas a objetos datetime
-    fecha_inicio_dt = datetime.strptime(fecha_inicio, '%Y-%m-%d')
-    fecha_fin_dt = datetime.strptime(fecha_fin, '%Y-%m-%d')
-
-    # Obtener los repartos del cliente en el rango de fechas
-    deliveries = Delivery.query.filter(
-        Delivery.client_name == client.username,
-        Delivery.delivery_date >= fecha_inicio_dt,
-        Delivery.delivery_date <= fecha_fin_dt
-    ).all()
-
-    # Verificar si hay datos para exportar
-    if not deliveries:
-        flash('No hay repartos disponibles en el rango de fechas seleccionado.', 'warning')
-        return redirect(url_for('obtener_extracto_cliente', client_id=client.id))
-
-    # Crear un archivo CSV con los datos
-    csv_path = f"/tmp/extracto_cliente_{client.username}_{fecha_inicio}_{fecha_fin}.csv"
-    with open(csv_path, mode='w', newline='') as csv_file:
-        fieldnames = ['Fecha de Entrega', 'Ítems Entregados', 'Notas']
-        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-
-        # Escribir encabezados
-        writer.writeheader()
-
-        # Escribir filas con los datos de entregas
-        for delivery in deliveries:
-            writer.writerow({
-                'Fecha de Entrega': delivery.delivery_date.strftime('%Y-%m-%d'),
-                'Ítems Entregados': delivery.items_delivered,
-                'Notas': delivery.notes
-            })
-
-    # Enviar el archivo al cliente para su descarga
-    return send_file(csv_path, as_attachment=True, download_name=f"Extracto_{client.username}_{fecha_inicio}_{fecha_fin}.csv")
-
 
 # Ruta para iniciar sesión
 @app.route('/login', methods=['GET', 'POST'])
