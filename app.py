@@ -264,10 +264,14 @@ def login():
         username = request.form['username']
         password = request.form['password']
         user = User.query.filter_by(username=username).first()
+
         if user and check_password_hash(user.password, password):
             login_user(user)
+            flash('Login exitoso.', 'success')
             return redirect(url_for('home'))
-        flash('Nombre de usuario o contraseña incorrectos')
+        
+        flash('Nombre de usuario o contraseña incorrectos', 'danger')
+    
     return render_template('login.html', title="Login")
 
 # Ruta para cerrar sesión
