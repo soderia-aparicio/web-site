@@ -1,4 +1,5 @@
 import os
+import csv
 from flask import Flask, render_template, request, redirect, url_for, flash, session, g, send_file
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -7,7 +8,6 @@ from dotenv import load_dotenv
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
-import pandas as pd
 
 # Cargar variables de entorno desde el archivo .env
 load_dotenv()
@@ -207,30 +207,7 @@ def obtener_extracto_cliente(client_id):
 
     return render_template('extracto_cliente.html', client=client, deliveries=deliveries)
 
-# Ruta para obtener extracto de cliente
-@app.route('/cliente/extracto/<int:client_id>', methods=['GET', 'POST'])
-@login_required
-@role_required(['developer', 'master', 'employee'])
-def obtener_extracto_cliente(client_id):
-    client = User.query.get_or_404(client_id)
-    deliveries = None
-
-    if request.method == 'POST':
-        fecha_inicio = request.form.get('fecha_inicio')
-        fecha_fin = request.form.get('fecha_fin')
-
-        if fecha_inicio and fecha_fin:
-            fecha_inicio_dt = datetime.strptime(fecha_inicio, '%Y-%m-%d')
-            fecha_fin_dt = datetime.strptime(fecha_fin, '%Y-%m-%d')
-            deliveries = Delivery.query.filter(
-                Delivery.client_name == client.username,
-                Delivery.delivery_date >= fecha_inicio_dt,
-                Delivery.delivery_date <= fecha_fin_dt
-            ).all()
-
-    return render_template('extracto_cliente.html', client=client, deliveries=deliveries)
-
-# Ruta para descargar extracto de cliente en Excel
+# Ruta para descargar extracto de cliente en Excel (formato CSV)
 @app.route('/cliente/extracto/descargar/<int:client_id>', methods=['POST'])
 @login_required
 @role_required(['developer', 'master', 'employee'])
@@ -254,27 +231,31 @@ def descargar_extracto_cliente(client_id):
         Delivery.delivery_date <= fecha_fin_dt
     ).all()
 
-    # Crear un DataFrame con los datos obtenidos
-    data = [{
-        'Fecha de Entrega': delivery.delivery_date.strftime('%Y-%m-%d'),
-        'Ítems Entregados': delivery.items_delivered,
-        'Notas': delivery.notes
-    } for delivery in deliveries]
-
     # Verificar si hay datos para exportar
-    if not data:
+    if not deliveries:
         flash('No hay repartos disponibles en el rango de fechas seleccionado.', 'warning')
         return redirect(url_for('obtener_extracto_cliente', client_id=client.id))
 
-    # Crear un DataFrame con los datos
-    df = pd.DataFrame(data)
+    # Crear un archivo CSV con los datos obtenidos
+    csv_path = f"/tmp/extracto_cliente_{client.username}_{fecha_inicio}_{fecha_fin}.csv"
+    fieldnames = ['Fecha de Entrega', 'Ítems Entregados', 'Notas']
 
-    # Guardar el DataFrame en un archivo Excel temporal
-    excel_path = f"/tmp/extracto_cliente_{client.username}_{fecha_inicio}_{fecha_fin}.xlsx"
-    df.to_excel(excel_path, index=False)
+    with open(csv_path, mode='w', newline='') as csv_file:
+        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+
+        # Escribir encabezados
+        writer.writeheader()
+
+        # Escribir datos de cada entrega
+        for delivery in deliveries:
+            writer.writerow({
+                'Fecha de Entrega': delivery.delivery_date.strftime('%Y-%m-%d'),
+                'Ítems Entregados': delivery.items_delivered,
+                'Notas': delivery.notes
+            })
 
     # Enviar el archivo al cliente para su descarga
-    return send_file(excel_path, as_attachment=True, download_name=f"Extracto_{client.username}_{fecha_inicio}_{fecha_fin}.xlsx")
+    return send_file(csv_path, as_attachment=True, download_name=f"Extracto_{client.username}_{fecha_inicio}_{fecha_fin}.csv")
 
 
 # Ruta para descargar extracto de cliente
