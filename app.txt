@@ -290,42 +290,27 @@ def descargar_extracto_cliente(client_id):
         flash('Por favor ingrese ambas fechas.', 'danger')
         return redirect(url_for('obtener_extracto_cliente', client_id=client.id))
 
-    # Convertir las fechas a objetos datetime
     fecha_inicio_dt = datetime.strptime(fecha_inicio, '%Y-%m-%d')
     fecha_fin_dt = datetime.strptime(fecha_fin, '%Y-%m-%d')
-
-    # Obtener los repartos del cliente en el rango de fechas
     deliveries = Delivery.query.filter(
         Delivery.client_name == client.username,
         Delivery.delivery_date >= fecha_inicio_dt,
         Delivery.delivery_date <= fecha_fin_dt
     ).all()
 
-    # Verificar si hay datos para exportar
-    if not deliveries:
-        flash('No hay repartos disponibles en el rango de fechas seleccionado.', 'warning')
-        return redirect(url_for('obtener_extracto_cliente', client_id=client.id))
+    # Crear un dataframe con las entregas
+    data = [{
+        'Fecha de entrega': delivery.delivery_date,
+        'Cliente': delivery.client_name,
+        'Artículos entregados': delivery.items_delivered,
+        'Notas': delivery.notes
+    } for delivery in deliveries]
 
-    # Crear un archivo CSV con los datos
-    csv_path = f"/tmp/extracto_cliente_{client.username}_{fecha_inicio}_{fecha_fin}.csv"
-    with open(csv_path, mode='w', newline='') as csv_file:
-        fieldnames = ['Fecha de Entrega', 'Ítems Entregados', 'Notas']
-        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+    df = pd.DataFrame(data)
+    excel_path = f'/tmp/extracto_cliente_{client.username}.xlsx'
+    df.to_excel(excel_path, index=False)
 
-        # Escribir encabezados
-        writer.writeheader()
-
-        # Escribir filas con los datos de entregas
-        for delivery in deliveries:
-            writer.writerow({
-                'Fecha de Entrega': delivery.delivery_date.strftime('%Y-%m-%d'),
-                'Ítems Entregados': delivery.items_delivered,
-                'Notas': delivery.notes
-            })
-
-    # Enviar el archivo al cliente para su descarga
-    return send_file(csv_path, as_attachment=True, download_name=f"Extracto_{client.username}_{fecha_inicio}_{fecha_fin}.csv")
-
+    return send_file(excel_path, as_attachment=True)
 
 # Ruta para iniciar sesión
 @app.route('/login', methods=['GET', 'POST'])
