@@ -4,14 +4,12 @@ Flask==2.0.3
 # Extensions for Flask
 Flask-SQLAlchemy==2.5.1
 SQLAlchemy==1.4.32
-Flask-Migrate==3.1.0  # Versión fija de Flask-Migrate para evitar conflictos
-flask_bcrypt==0.7.1  # Flask extension for Bcrypt hashing
-Flask-Login==0.5.0  # Flask extension for user session management
+Flask-Migrate==3.1.0
+flask_bcrypt==0.7.1
+Flask-Login==0.5.0
 
 # PostgreSQL database adapter for Python
-# psycopg2-binary==2.9.6  # Añadimos una versión específica que es más estable y reciente
-pg8000==1.29.3
-psycopg2-binary==2.8.6
+pg8000==1.29.3  # Reemplaza psycopg2-binary para evitar problemas de compilación
 
 # Template engine
 Jinja2==3.1.4
@@ -21,12 +19,11 @@ click==8.1.7
 itsdangerous==2.1.2
 MarkupSafe==2.1.1
 typing_extensions==4.12.1
-Werkzeug==2.0.3  # Especifica solo una versión de Werkzeug para evitar conflictos
+Werkzeug==2.0.3
 
 # For loading environment variables from .env file
 python-dotenv==0.19.0
 
-# Paquetes adicionales para asegurar que las dependencias de construcción estén completas
+# Build tools
 setuptools>=65.5.0
 wheel>=0.40.0
-
