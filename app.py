@@ -261,18 +261,40 @@ def descargar_extracto_cliente(client_id):
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        user = User.query.filter_by(username=username).first()
+        try:
+            username = request.form['username']
+            password = request.form['password']
 
-        if user and check_password_hash(user.password, password):
+            # Verificar si los campos están vacíos
+            if not username or not password:
+                flash('Por favor ingresa un nombre de usuario y una contraseña.', 'warning')
+                return redirect(url_for('login'))
+
+            # Buscar al usuario en la base de datos
+            user = User.query.filter_by(username=username).first()
+
+            # Manejar caso en que no se encuentre al usuario
+            if user is None:
+                flash(f"No se encontró ningún usuario con el nombre '{username}'. Por favor verifica la información ingresada.", 'danger')
+                return redirect(url_for('login'))
+
+            # Verificar la contraseña
+            if not check_password_hash(user.password, password):
+                flash('Contraseña incorrecta. Por favor intenta nuevamente.', 'danger')
+                return redirect(url_for('login'))
+
+            # Iniciar sesión si las credenciales son correctas
             login_user(user)
-            flash('Login exitoso.', 'success')
+            flash(f'¡Bienvenido, {user.username}!', 'success')
             return redirect(url_for('home'))
-        
-        flash('Nombre de usuario o contraseña incorrectos', 'danger')
-    
+
+        except Exception as e:
+            # Capturar errores inesperados y notificar al usuario
+            flash('Ocurrió un error inesperado al intentar iniciar sesión. Por favor intenta de nuevo más tarde.', 'danger')
+            print(f'Error en la ruta /login: {str(e)}')  # Registrar error para depuración
+
     return render_template('login.html', title="Login")
+
 
 # Ruta para cerrar sesión
 @app.route('/logout')
