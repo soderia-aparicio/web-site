@@ -1,70 +1,67 @@
-{% extends "base.html" %}  <!-- Extiende la plantilla base para mantener la integridad del diseño -->
+{% extends "base.html" %}
 
-{% block content %}  <!-- Bloque para el contenido específico de esta página -->
+{% block content %}
 <div class="container mt-4">
-    <!-- Título principal de la sección de Gestión de Repartos -->
     <h1 class="title text-center mb-4">Gestión de Repartos</h1>
 
-    <!-- Formulario para crear o actualizar un reparto -->
-    <form method="POST" action="{{ url_for('gestion_repartos') }}" class="mb-5">
-        <div class="form-group">
-            <label for="client_name">Nombre del Cliente</label>
-            <input type="text" class="form-control" id="client_name" name="client_name" required>
-        </div>
-        <div class="form-group">
-            <label for="delivery_date">Fecha de Entrega</label>
-            <input type="date" class="form-control" id="delivery_date" name="delivery_date" required>
-        </div>
-        <div class="form-group">
-            <label for="items_delivered">Ítems Entregados</label>
-            <input type="text" class="form-control" id="items_delivered" name="items_delivered" required>
-        </div>
-        <div class="form-group">
-            <label for="notes">Notas</label>
-            <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
-        </div>
-        <!-- Botón para guardar el reparto -->
-        <button type="submit" class="btn btn-primary">Guardar Reparto</button>
-    </form>
+    <!-- Botones para crear y eliminar repartos -->
+    <div class="mb-4 text-center">
+        <a href="{{ url_for('crear_reparto') }}" class="btn btn-success">Crear Reparto</a>
+        <button class="btn btn-danger" id="delete-reparto-btn" disabled>Eliminar Reparto</button>
+    </div>
 
-    <!-- Sección de repartos existentes -->
+    <!-- Tabla de repartos existentes -->
     <h2 class="mb-3">Repartos Existentes</h2>
     <table class="table table-dark table-hover">
         <thead>
             <tr>
-                <th>Nombre del Cliente</th>
-                <th>Fecha de Entrega</th>
-                <th>Ítems Entregados</th>
-                <th>Notas</th>
+                <th>Nombre del Reparto</th>
+                <th>Responsable</th>
+                <th>Día de la Semana</th>
+                <th>Cantidad de Clientes</th>
                 <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
-            {% for delivery in deliveries %}
-            <tr>
-                <td>{{ delivery.client_name }}</td>
-                <td>{{ delivery.delivery_date.strftime('%Y-%m-%d') }}</td>
-                <td>{{ delivery.items_delivered }}</td>
-                <td>{{ delivery.notes }}</td>
+            {% for reparto in repartos %}
+            <tr data-id="{{ reparto.id }}">
+                <td>{{ reparto.nombre }}</td>
+                <td>{{ reparto.responsable }}</td>
+                <td>{{ reparto.dia_semana }}</td>
+                <td>{{ reparto.cantidad_clientes }}</td>
                 <td>
-                    <!-- Formulario para editar un reparto existente -->
-                    {% if current_user.role in ['developer', 'master', 'employee'] %}
-                    <form method="POST" action="{{ url_for('gestion_repartos') }}" class="d-inline">
-                        <input type="hidden" name="delivery_id" value="{{ delivery.id }}">
-                        <button type="submit" class="btn btn-warning btn-sm">Editar</button>
-                    </form>
-                    {% endif %}
-                    <!-- Formulario para eliminar un reparto existente -->
-                    {% if current_user.role in ['developer', 'master'] %}
-                    <form method="POST" action="{{ url_for('eliminar_reparto') }}" class="d-inline" onsubmit="return confirm('¿Está seguro que desea eliminar este reparto? Esta acción no se puede deshacer.');">
-                        <input type="hidden" name="delivery_id" value="{{ delivery.id }}">
-                        <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
-                    </form>
-                    {% endif %}
+                    <!-- Botón para ver detalles del reparto -->
+                    <a href="{{ url_for('detalle_reparto', reparto_id=reparto.id) }}" class="btn btn-info btn-sm">Ver Detalle</a>
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
+
 {% endblock %}
+
+<script>
+// Script para manejar la eliminación de repartos
+document.addEventListener("DOMContentLoaded", function() {
+    const deleteButton = document.getElementById('delete-reparto-btn');
+    let selectedRepartoId = null;
+
+    document.querySelectorAll('tbody tr').forEach(row => {
+        row.addEventListener('click', function() {
+            document.querySelectorAll('tbody tr').forEach(r => r.classList.remove('table-active'));
+            row.classList.add('table-active');
+            selectedRepartoId = row.dataset.id;
+            deleteButton.disabled = false;
+        });
+    });
+
+    deleteButton.addEventListener('click', function() {
+        if (selectedRepartoId) {
+            if (confirm('¿Está seguro de eliminar el reparto seleccionado? Esta acción no se puede deshacer.')) {
+                window.location.href = `{{ url_for('eliminar_reparto') }}?reparto_id=${selectedRepartoId}`;
+            }
+        }
+    });
+});
+</script>

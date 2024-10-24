@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="title text-center mb-4">Detalle del Reparto</h1>
+
+    <div class="card">
+        <div class="card-header">
+            Información del Reparto
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('actualizar_reparto', reparto_id=reparto.id) }}">
+                <div class="form-group">
+                    <label for="nombre">Nombre del Reparto</label>
+                    <input type="text" class="form-control" id="nombre" name="nombre" value="{{ reparto.nombre }}" {% if current_user.role == 'empleado' %}readonly{% endif %}>
+                </div>
+                <div class="form-group">
+                    <label for="responsable">Responsable</label>
+                    <input type="text" class="form-control" id="responsable" name="responsable" value="{{ reparto.responsable }}" {% if current_user.role == 'empleado' %}readonly{% endif %}>
+                </div>
+                <div class="form-group">
+                    <label for="dia_semana">Día de la Semana</label>
+                    <select class="form-control" id="dia_semana" name="dia_semana" {% if current_user.role == 'empleado' %}disabled{% endif %}>
+                        <option value="Lunes" {% if reparto.dia_semana == "Lunes" %}selected{% endif %}>Lunes</option>
+                        <option value="Martes" {% if reparto.dia_semana == "Martes" %}selected{% endif %}>Martes</option>
+                        <option value="Miércoles" {% if reparto.dia_semana == "Miércoles" %}selected{% endif %}>Miércoles</option>
+                        <option value="Jueves" {% if reparto.dia_semana == "Jueves" %}selected{% endif %}>Jueves</option>
+                        <option value="Viernes" {% if reparto.dia_semana == "Viernes" %}selected{% endif %}>Viernes</option>
+                        <option value="Sábado" {% if reparto.dia_semana == "Sábado" %}selected{% endif %}>Sábado</option>
+                        <option value="Domingo" {% if reparto.dia_semana == "Domingo" %}selected{% endif %}>Domingo</option>
+                    </select>
+                </div>
+                <div class="form-group mt-3">
+                    <label for="cantidad_clientes">Cantidad de Clientes</label>
+                    <input type="text" class="form-control" id="cantidad_clientes" name="cantidad_clientes" value="{{ reparto.cantidad_clientes }}" readonly>
+                </div>
+                <div class="mt-4 text-center">
+                    {% if current_user.role in ['developer', 'master'] %}
+                    <button type="submit" class="btn btn-success">Guardar Cambios</button>
+                    {% endif %}
+                    <a href="{{ url_for('gestion_repartos') }}" class="btn btn-secondary">Volver</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

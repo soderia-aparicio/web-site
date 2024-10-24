@@ -73,6 +73,15 @@ class Delivery(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user = db.relationship('User', backref=db.backref('deliveries', lazy=True))
 
+# Modelo de Auditoría
+class AuditTrail(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), nullable=False)
+    action = db.Column(db.String(100), nullable=False)  # "create", "update", "delete"
+    old_data = db.Column(db.Text, nullable=True)  # Datos antes del cambio
+    new_data = db.Column(db.Text, nullable=True)  # Datos después del cambio
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
 # Decorador para verificar roles específicos de usuarios
 def role_required(roles):
     def decorator(f):
@@ -91,10 +100,30 @@ def before_request():
 
 # Ruta para la página principal
 @app.route('/')
+@login_required
 def home():
-    if not current_user.is_authenticated:
-        return redirect(url_for('login'))
     return render_template('home.html', title="Soderia Aparicio")
+
+# Ruta para ver el perfil del usuario
+@app.route('/perfil')
+@login_required
+def perfil():
+    return render_template('perfil.html', user=current_user, title="Perfil")
+
+# Ruta para editar el perfil del usuario
+@app.route('/perfil/editar', methods=['GET', 'POST'])
+@login_required
+def editar_perfil():
+    if request.method == 'POST':
+        current_user.username = request.form['username']
+        current_user.email = request.form['email']
+        current_user.phone_number = request.form['phone_number']
+
+        db.session.commit()
+        flash('Perfil actualizado exitosamente.', 'success')
+        return redirect(url_for('perfil'))
+
+    return render_template('editar_perfil.html', user=current_user, title="Editar Perfil")
 
 # Ruta para noticias
 @app.route('/news')
@@ -106,6 +135,12 @@ def news():
 def foro():
     messages = Message.query.order_by(Message.timestamp.desc()).all()
     return render_template('foro.html', messages=messages, title="Foro")
+
+# Nueva ruta para los videos
+@app.route('/videos')
+@login_required
+def videos():
+    return render_template('videos.html', title="Videos")
 
 # Ruta para postear en el foro
 @app.route('/postear', methods=['GET', 'POST'])
@@ -152,7 +187,45 @@ def gestion_usuarios():
     users = User.query.all()
     return render_template('gestion_usuarios.html', users=users, title="Gestión de Usuarios")
 
-# Ruta para gestionar repartos
+# Ruta para crear un nuevo reparto
+@app.route('/crear_reparto', methods=['GET', 'POST'])
+@login_required
+@role_required(['developer', 'master', 'employee'])
+def crear_reparto():
+    # Obtener la lista de usuarios con roles Developer, Master, y Empleado para asignar como responsable
+    responsables = User.query.filter(User.role.in_(['developer', 'master', 'employee'])).all()
+
+    # Obtener la lista de usuarios con rol Cliente
+    clientes = User.query.filter_by(role='client').all()
+
+    if request.method == 'POST':
+        nombre = request.form['nombre']
+        responsable_id = request.form['responsable']
+        dia_semana = request.form['dia_semana']
+        cliente_ids = request.form.getlist('clientes')
+
+        # Crear el nuevo reparto con los datos ingresados
+        new_reparto = Delivery(
+            client_name=nombre,
+            delivery_date=datetime.now(),  # Puedes modificar esta línea según cómo manejes las fechas
+            items_delivered='',
+            notes='',
+            user_id=responsable_id
+        )
+        db.session.add(new_reparto)
+        db.session.commit()
+
+        # Asignar clientes al reparto
+        for client_id in cliente_ids:
+            # Aquí podrías crear una relación entre el reparto y el cliente si existe un modelo de relación
+            pass  # Implementar según tus necesidades específicas
+        
+        flash('Reparto creado exitosamente.', 'success')
+        return redirect(url_for('gestion_repartos'))
+
+    return render_template('crear_reparto.html', title="Crear Reparto", responsables=responsables, clientes=clientes)
+
+# Ruta para gestionar repartos, incluyendo el registro en el historial de auditoría
 @app.route('/gestion_repartos', methods=['GET', 'POST'])
 @login_required
 @role_required(['developer', 'master', 'employee'])
@@ -162,6 +235,12 @@ def gestion_repartos():
         if delivery_id:
             delivery = Delivery.query.get(delivery_id)
             if delivery:
+                old_data = {
+                    'client_name': delivery.client_name,
+                    'delivery_date': delivery.delivery_date.strftime('%Y-%m-%d'),
+                    'items_delivered': delivery.items_delivered,
+                    'notes': delivery.notes,
+                }
                 if 'client_name' in request.form:
                     delivery.client_name = request.form['client_name']
                 if 'delivery_date' in request.form:
@@ -170,19 +249,69 @@ def gestion_repartos():
                     delivery.items_delivered = request.form['items_delivered']
                 if 'notes' in request.form:
                     delivery.notes = request.form['notes']
+
                 db.session.commit()
+
+                new_data = {
+                    'client_name': delivery.client_name,
+                    'delivery_date': delivery.delivery_date.strftime('%Y-%m-%d'),
+                    'items_delivered': delivery.items_delivered,
+                    'notes': delivery.notes,
+                }
+
+                # Registrar en el historial de auditoría
+                audit_entry = AuditTrail(
+                    username=current_user.username,
+                    action='update',
+                    old_data=str(old_data),
+                    new_data=str(new_data)
+                )
+                db.session.add(audit_entry)
+                db.session.commit()
+
                 flash('Reparto actualizado exitosamente.')
         else:
             client_name = request.form['client_name']
             delivery_date = datetime.strptime(request.form['delivery_date'], '%Y-%m-%d')
             items_delivered = request.form['items_delivered']
             notes = request.form.get('notes', '')
-            new_delivery = Delivery(client_name=client_name, delivery_date=delivery_date, items_delivered=items_delivered, notes=notes, user_id=current_user.id)
+
+            new_delivery = Delivery(
+                client_name=client_name,
+                delivery_date=delivery_date,
+                items_delivered=items_delivered,
+                notes=notes,
+                user_id=current_user.id
+            )
             db.session.add(new_delivery)
             db.session.commit()
+
+            # Registrar creación en el historial de auditoría
+            audit_entry = AuditTrail(
+                username=current_user.username,
+                action='create',
+                new_data=str({
+                    'client_name': client_name,
+                    'delivery_date': delivery_date.strftime('%Y-%m-%d'),
+                    'items_delivered': items_delivered,
+                    'notes': notes,
+                })
+            )
+            db.session.add(audit_entry)
+            db.session.commit()
+
             flash('Reparto creado exitosamente.')
+
     deliveries = Delivery.query.all()
     return render_template('gestion_repartos.html', deliveries=deliveries, title="Gestión de Repartos")
+
+# Ruta para ver el historial de auditoría
+@app.route('/audit_trail')
+@login_required
+@role_required(['developer', 'master'])
+def audit_trail():
+    audits = AuditTrail.query.order_by(AuditTrail.timestamp.desc()).all()
+    return render_template('audit_trail.html', audits=audits, title="Historial de Auditoría")
 
 # Ruta para obtener extracto de cliente
 @app.route('/cliente/extracto/<int:client_id>', methods=['GET', 'POST'])
@@ -238,19 +367,17 @@ def descargar_extracto_cliente(client_id):
 
     # Crear un archivo CSV con los datos obtenidos
     csv_path = f"/tmp/extracto_cliente_{client.username}_{fecha_inicio}_{fecha_fin}.csv"
-    fieldnames = ['Fecha de Entrega', 'Ítems Entregados', 'Notas']
+    fieldnames = ['Fecha de Entrega', 'Items Entregados', 'Notas']
 
     with open(csv_path, mode='w', newline='', encoding='utf-8') as csv_file:
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-        
         # Escribir encabezados
         writer.writeheader()
-
         # Escribir los datos
         for delivery in deliveries:
             writer.writerow({
                 'Fecha de Entrega': delivery.delivery_date.strftime('%Y-%m-%d'),
-                'Ítems Entregados': delivery.items_delivered,
+                'Items Entregados': delivery.items_delivered,
                 'Notas': delivery.notes
             })
 
@@ -267,7 +394,7 @@ def login():
 
             # Verificar si los campos están vacíos
             if not username or not password:
-                error_message = '⚠️ Por favor ingresa un nombre de usuario y una contraseña para continuar.'
+                error_message = 'Por favor ingresa un nombre de usuario y una contraseña para continuar.'
                 return render_template('login.html', title="Login", error_message=error_message)
 
             # Buscar al usuario en la base de datos
@@ -275,27 +402,26 @@ def login():
 
             # Manejar caso en que no se encuentre al usuario
             if user is None:
-                error_message = f"❌ No encontramos ninguna cuenta asociada al nombre de usuario '{username}'. Asegúrate de que el nombre ingresado sea correcto o considera registrarte si no tienes una cuenta."
+                error_message = f"No encontramos ninguna cuenta asociada al nombre de usuario '{username}'."
                 return render_template('login.html', title="Login", error_message=error_message)
 
             # Verificar la contraseña
             if not check_password_hash(user.password, password):
-                error_message = '🔑 La contraseña ingresada no es correcta. Por favor intenta nuevamente.'
+                error_message = 'La contraseña ingresada no es correcta. Por favor intenta nuevamente.'
                 return render_template('login.html', title="Login", error_message=error_message)
 
             # Iniciar sesión si las credenciales son correctas
             login_user(user)
-            flash(f'✨ ¡Bienvenido, {user.username}! Nos alegra verte de nuevo. 😊', 'success')
+            flash(f'¡Bienvenido, {user.username}! Nos alegra verte de nuevo.', 'success')
             return redirect(url_for('home'))
 
         except Exception as e:
             # Capturar errores inesperados y notificar al usuario
-            error_message = '⚠️ Ocurrió un error inesperado al intentar iniciar sesión. Por favor, intenta de nuevo más tarde. Si el problema persiste, contacta con soporte.'
+            error_message = 'Ocurrió un error inesperado al intentar iniciar sesión. Por favor, intenta de nuevo más tarde.'
             print(f'Error en la ruta /login: {str(e)}')  # Registrar error para depuración
             return render_template('login.html', title="Login", error_message=error_message)
 
     return render_template('login.html', title="Login")
-
 
 # Ruta para cerrar sesión
 @app.route('/logout')
@@ -315,7 +441,7 @@ def register():
         confirm_password = request.form['confirm_password']
 
         if password != confirm_password:
-            flash('Passwords do not match. Please try again.', 'danger')
+            flash('Las contraseñas no coinciden. Por favor, intenta de nuevo.', 'danger')
             return redirect(url_for('register'))
 
         hashed_password = generate_password_hash(password, method='sha256')
@@ -329,25 +455,10 @@ def register():
             flash('Registro exitoso y has sido logueado automáticamente.', 'success')
             return redirect(url_for('home'))
         
-        flash('Registration successful! Please login.', 'success')
+        flash('Registro exitoso. Por favor inicia sesión.', 'success')
         return redirect(url_for('login'))
 
     return render_template('register.html', title="Register")
-
-# Ruta para editar el perfil del usuario
-@app.route('/perfil/editar', methods=['GET', 'POST'])
-@login_required
-def editar_perfil():
-    if request.method == 'POST':
-        current_user.username = request.form['username']
-        current_user.email = request.form['email']
-        current_user.phone_number = request.form['phone_number']
-
-        db.session.commit()
-        flash('Perfil actualizado exitosamente.', 'success')
-        return redirect(url_for('perfil'))
-
-    return render_template('editar_perfil.html', user=current_user, title="Editar Perfil")
 
 if __name__ == '__main__':
     with app.app_context():

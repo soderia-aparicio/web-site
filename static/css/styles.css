@@ -180,7 +180,7 @@ body {
     left: 0;
     right: 0;
     z-index: 1000;
-    background: linear-gradient(45deg, #50a5eb, #64e9e9);
+    background: linear-gradient(45deg, #11eeee, #237afc);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
     width: 100%;
     padding: 10px 0;
@@ -200,7 +200,7 @@ body {
 }
 
 .navbar .nav-link:hover {
-    background: linear-gradient(45deg, #303ce2, #65c5e2);
+    background: linear-gradient(45deg, #0000ff, #7cb6f8);
 }
 
 /* Estilo del texto general */

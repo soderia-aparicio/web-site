@@ -1,0 +1,73 @@
+{% extends "base.html" %}  <!-- Extiende la plantilla base para mantener la integridad del diseño -->
+
+{% block content %}  <!-- Bloque para el contenido específico de esta página -->
+<div class="container mt-4">
+    <!-- Título principal de la sección de Historial de Auditoría -->
+    <h1 class="title text-center mb-4">Historial de Auditoría</h1>
+
+    <!-- Tabla para mostrar los registros de auditoría -->
+    <table class="table table-striped table-hover table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th>Usuario</th>
+                <th>Fecha y Hora</th>
+                <th>Acción Realizada</th>
+                <th>Elemento Modificado</th>
+                <th>Valor Anterior</th>
+                <th>Valor Nuevo</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in audit_trails %}
+            <tr>
+                <td>{{ record.username }}</td>
+                <td>{{ record.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                <td>{{ record.action }}</td>
+                <td>{{ record.element_modified }}</td>
+                <td>{{ record.old_value }}</td>
+                <td>{{ record.new_value }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+<script>
+// Script para manejar la búsqueda rápida dentro de la tabla de auditoría
+document.addEventListener("DOMContentLoaded", function() {
+    const searchInput = document.getElementById('search');
+    searchInput.addEventListener('keyup', function() {
+        const filter = searchInput.value.toUpperCase();
+        const rows = document.querySelectorAll('table tbody tr');
+
+        rows.forEach(row => {
+            const td = row.querySelector('td');
+            if (td) {
+                const txtValue = td.textContent || td.innerText;
+                row.style.display = txtValue.toUpperCase().indexOf(filter) > -1 ? "" : "none";
+            }
+        });
+    });
+});
+</script>
+
+<style>
+    /* Añadir algunos estilos personalizados para la tabla */
+    .table {
+        background-color: #f9f9f9;  /* Fondo blanco suave para la tabla */
+    }
+
+    .thead-dark th {
+        background-color: #343a40;
+        color: #ffffff;  /* Fondo oscuro y texto blanco para encabezados */
+    }
+
+    tr:hover {
+        background-color: #f1f1f1;  /* Fondo gris claro al pasar el mouse sobre la fila */
+    }
+
+    .title {
+        color: #0056b3;  /* Título en color azul similar al utilizado en el sitio */
+    }
+</style>

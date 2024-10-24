@@ -1,30 +1,80 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container">
-  <h2 class="my-4">Crear Nuevo Reparto</h2>
-  <form method="POST" action="{{ url_for('crear_reparto') }}">
-    <div class="form-group">
-      <label for="cliente">Seleccionar Cliente</label>
-      <select class="form-control" id="cliente" name="cliente_id" required>
-        {% for cliente in clientes %}
-        <option value="{{ cliente.id }}">{{ cliente.nombre }}</option>
-        {% endfor %}
-      </select>
-    </div>
-    <div class="form-group">
-      <label for="cantidad">Cantidad de Productos</label>
-      <input type="number" class="form-control" id="cantidad" name="cantidad" required>
-    </div>
-    <div class="form-group">
-      <label for="fecha">Fecha de Reparto</label>
-      <input type="date" class="form-control" id="fecha" name="fecha" required>
-    </div>
-    <div class="form-group">
-      <label for="observaciones">Observaciones</label>
-      <textarea class="form-control" id="observaciones" name="observaciones"></textarea>
-    </div>
-    <button type="submit" class="btn btn-primary">Crear Reparto</button>
-  </form>
+<h2 class="text-center">Crear Nuevo Reparto</h2>
+
+<div class="form-container">
+    <form method="POST" action="{{ url_for('crear_reparto') }}">
+        <div class="form-group">
+            <label for="nombre">Nombre del Reparto</label>
+            <input type="text" id="nombre" name="nombre" class="form-control" value="" required>
+        </div>
+
+        <div class="form-group">
+            <label for="responsable">Responsable</label>
+            <select id="responsable" name="responsable" class="form-control" title="Selecciona el responsable del reparto" required>
+                <option value="" selected disabled>Selecciona un responsable</option>
+                {% for user in responsables %}
+                    <option value="{{ user.id }}">{{ user.username }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="dia_semana">Día de la Semana</label>
+            <select id="dia_semana" name="dia_semana" class="form-control" title="Selecciona el día de la semana para el reparto" required>
+                <option value="" selected disabled>Selecciona un día</option>
+                <option value="Lunes">Lunes</option>
+                <option value="Martes">Martes</option>
+                <option value="Miércoles">Miércoles</option>
+                <option value="Jueves">Jueves</option>
+                <option value="Viernes">Viernes</option>
+                <option value="Sábado">Sábado</option>
+                <option value="Domingo">Domingo</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="clientes">Clientes</label>
+            <div class="client-selection">
+                <select id="clientes" name="clientes" class="form-control" title="Selecciona uno o más clientes para el reparto" multiple>
+                    <!-- Lista vacía al cargar, los clientes se agregarán con el botón Añadir -->
+                </select>
+                <button type="button" class="btn btn-success" onclick="openAddClientModal()">Añadir</button>
+                <button type="button" class="btn btn-danger" onclick="removeSelectedClient()">Eliminar</button>
+                <button type="button" class="btn btn-info" onclick="changeSelectedClient()">Cambiar</button>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Crear Reparto</button>
+    </form>
 </div>
+
+<!-- Modal para agregar cliente -->
+<div id="addClientModal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Añadir Cliente</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <select id="addClientSelect" class="form-control" title="Selecciona un cliente para añadirlo al reparto">
+                    {% for client in clientes %}
+                        <option value="{{ client.id }}">{{ client.username }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="addClient()">Añadir</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/crear_reparto.js') }}"></script>
+
 {% endblock %}
