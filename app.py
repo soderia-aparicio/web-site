@@ -267,31 +267,32 @@ def login():
 
             # Verificar si los campos están vacíos
             if not username or not password:
-                flash('Por favor ingresa un nombre de usuario y una contraseña.', 'warning')
-                return redirect(url_for('login'))
+                error_message = '⚠️ Por favor ingresa un nombre de usuario y una contraseña para continuar.'
+                return render_template('login.html', title="Login", error_message=error_message)
 
             # Buscar al usuario en la base de datos
             user = User.query.filter_by(username=username).first()
 
             # Manejar caso en que no se encuentre al usuario
             if user is None:
-                flash(f"No se encontró ningún usuario con el nombre '{username}'. Por favor verifica la información ingresada.", 'danger')
-                return redirect(url_for('login'))
+                error_message = f"❌ No encontramos ninguna cuenta asociada al nombre de usuario '{username}'. Asegúrate de que el nombre ingresado sea correcto o considera registrarte si no tienes una cuenta."
+                return render_template('login.html', title="Login", error_message=error_message)
 
             # Verificar la contraseña
             if not check_password_hash(user.password, password):
-                flash('Contraseña incorrecta. Por favor intenta nuevamente.', 'danger')
-                return redirect(url_for('login'))
+                error_message = '🔑 La contraseña ingresada no es correcta. Por favor intenta nuevamente.'
+                return render_template('login.html', title="Login", error_message=error_message)
 
             # Iniciar sesión si las credenciales son correctas
             login_user(user)
-            flash(f'¡Bienvenido, {user.username}!', 'success')
+            flash(f'✨ ¡Bienvenido, {user.username}! Nos alegra verte de nuevo. 😊', 'success')
             return redirect(url_for('home'))
 
         except Exception as e:
             # Capturar errores inesperados y notificar al usuario
-            flash('Ocurrió un error inesperado al intentar iniciar sesión. Por favor intenta de nuevo más tarde.', 'danger')
+            error_message = '⚠️ Ocurrió un error inesperado al intentar iniciar sesión. Por favor, intenta de nuevo más tarde. Si el problema persiste, contacta con soporte.'
             print(f'Error en la ruta /login: {str(e)}')  # Registrar error para depuración
+            return render_template('login.html', title="Login", error_message=error_message)
 
     return render_template('login.html', title="Login")
 

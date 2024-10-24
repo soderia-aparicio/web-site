@@ -1,104 +1,219 @@
+/* Actualización de styles.css para mejorar la página de login */
+
+/* General body styles */
 body {
     margin: 0;
     padding: 0;
     display: flex;
+    flex-direction: column; /* Alineación en columna para centrar el menú y el formulario */
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background: #000;
-    font-family: Arial, sans-serif;
+    background: #0000ff; /* Fondo azul */
+    font-family: 'Poppins', sans-serif; /* Fuente utilizada */
+    overflow: hidden; /* Para evitar el scroll con las burbujas */
 }
 
-.ring {
-    position: relative;
-    width: 300px;
-    height: 300px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.ring i {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border: 4px solid transparent;
-    border-top: 4px solid var(--clr);
+/* Estilo del fondo animado con burbujas */
+.burbuja {
     border-radius: 50%;
-    animation: animate 4s linear infinite;
+    background: #fff;
+    opacity: .3;
+    position: absolute;
+    bottom: -150px;
+    animation: burbujas 3s linear infinite;
 }
 
-.ring i:nth-child(1) {
-    --clr: #00bf00;
+.burbuja:nth-child(1) {
+    width: 80px;
+    height: 80px;
+    left: 5%;
+    animation-duration: 3s;
+    animation-delay: 3s;
+}
+
+.burbuja:nth-child(2) {
+    width: 100px;
+    height: 100px;
+    left: 35%;
+    animation-duration: 3s;
+    animation-delay: 5s;
+}
+
+.burbuja:nth-child(3) {
+    width: 20px;
+    height: 20px;
+    left: 15%;
+    animation-duration: 1.5s;
+    animation-delay: 7s;
+}
+
+.burbuja:nth-child(4) {
+    width: 50px;
+    height: 50px;
+    left: 90%;
     animation-duration: 6s;
+    animation-delay: 3s;
 }
 
-.ring i:nth-child(2) {
-    --clr: #ff0077;
-    animation-duration: 7s;
+.burbuja:nth-child(5) {
+    width: 70px;
+    height: 70px;
+    left: 65%;
+    animation-duration: 3s;
+    animation-delay: 1s;
 }
 
-.ring i:nth-child(3) {
-    --clr: #ff6600;
-    animation-duration: 8s;
+.burbuja:nth-child(6) {
+    width: 20px;
+    height: 20px;
+    left: 50%;
+    animation-duration: 4s;
+    animation-delay: 5s;
 }
 
-@keyframes animate {
+@keyframes burbujas {
     0% {
-        transform: rotate(0deg);
+        transform: translateY(0);
     }
     100% {
-        transform: rotate(360deg);
+        transform: translateY(-800px);
     }
 }
 
+/* Estilo del formulario de login con animación de entrada */
 .login {
     position: relative;
     width: 100%;
     max-width: 350px;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.8);
     padding: 40px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
     border-radius: 10px;
     text-align: center;
-    color: #fff;
+    color: #000;
+    transform: translateY(20px);
+    opacity: 0;
+    animation: slideIn 0.8s ease-out forwards;
+    margin-top: 20px; /* Espacio entre el menú y el formulario de login */
 }
 
-.login h2 {
-    font-size: 2em;
-    margin-bottom: 20px;
+@keyframes slideIn {
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
-.login .inputBx {
-    position: relative;
-    width: 100%;
-    margin-bottom: 20px;
+/* Animación de enfoque para los campos de input */
+.login .inputBx input:focus {
+    border-color: #1e90ff;
+    box-shadow: 0 0 5px #1e90ff;
+    transition: box-shadow 0.3s ease-in-out, border-color 0.3s ease-in-out;
 }
 
-.login .inputBx input {
-    width: 100%;
-    padding: 12px 20px;
-    background: rgba(255, 255, 255, 0.1);
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    font-size: 1em;
-    color: #fff;
-    border-radius: 5px;
-    outline: none;
-}
-
+/* Botón de envío con animación de "ripple" y feedback visual */
 .login .inputBx input[type="submit"] {
     background: linear-gradient(45deg, #f3570a, #ff1f72);
     border: none;
     cursor: pointer;
-}
-
-.login .links {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-}
-
-.login .links a {
+    position: relative;
+    overflow: hidden;
     color: #fff;
-    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    transition: background 0.3s ease;
+}
+
+.login .inputBx input[type="submit"]:hover {
+    background: linear-gradient(45deg, #ff1f72, #f3570a);
+}
+
+.login .inputBx input[type="submit"]:active {
+    background: #ff1f72;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Añadir un pseudo-elemento para el efecto de "ripple" */
+.login .inputBx input[type="submit"]::after {
+    content: "";
+    display: block;
+    position: absolute;
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(0);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.5s, opacity 0.5s;
+}
+
+/* Añadir animación al hacer clic en el botón de envío */
+.login .inputBx input[type="submit"]:active::after {
+    transform: scale(3);
+    opacity: 1;
+}
+
+/* Mensajes de error más claros y animados */
+.custom-modal-content {
+    background-color: #000; /* Fondo negro */
+    color: #007bff; /* Color de texto azul */
+    border-radius: 10px; /* Borde redondeado */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Sombra del modal */
+    opacity: 0;
+    transform: translateY(-20px);
+    animation: fadeIn 0.5s forwards;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Centrar el menú en la parte superior de la página */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: linear-gradient(45deg, #50a5eb, #64e9e9);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    width: 100%;
+    padding: 10px 0;
+    border-radius: 5px;
+}
+
+.navbar .navbar-nav {
+    justify-content: center;
+    width: 100%;
+}
+
+.navbar .nav-link {
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    transition: background 0.3s ease;
+}
+
+.navbar .nav-link:hover {
+    background: linear-gradient(45deg, #303ce2, #65c5e2);
+}
+
+/* Estilo del texto general */
+h2.title, label, input {
+    color: #0056b3; /* Cambiar el color de la letra a azul */
+}
+
+/* Estilo del escudo de la selección */
+.escudo {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    width: 100px;
+    height: auto;
+    opacity: 0.9;
 }

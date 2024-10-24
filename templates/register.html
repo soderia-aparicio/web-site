@@ -3,49 +3,53 @@
 {% block content %}
     <div class="container content mt-5">
         <h2 class="my-4">Register</h2>
+        <!-- Formulario de registro -->
         <form method="POST" action="{{ url_for('register') }}">
-            <!-- Form group for username input -->
+            <!-- Grupo de entrada para el nombre de usuario -->
             <div class="form-group">
                 <label for="username" class="highlight">Username</label>
-                <!-- Input field for username -->
+                <!-- Campo de entrada para el nombre de usuario -->
                 <input type="text" class="form-control" id="username" name="username" required>
             </div>
-            <!-- Form group for email input -->
+            <!-- Grupo de entrada para el correo electrónico -->
             <div class="form-group">
                 <label for="email" class="highlight">Email</label>
-                <!-- Input field for email -->
+                <!-- Campo de entrada para el correo electrónico -->
                 <input type="email" class="form-control" id="email" name="email" required>
             </div>
-            <!-- Form group for phone number input -->
+            <!-- Grupo de entrada para el número de teléfono -->
             <div class="form-group">
                 <label for="phone_number" class="highlight">Phone Number</label>
-                <!-- Input field for phone number -->
+                <!-- Campo de entrada para el número de teléfono -->
                 <input type="text" class="form-control" id="phone_number" name="phone_number" required>
             </div>
-            <!-- Form group for password input -->
+            <!-- Grupo de entrada para la contraseña -->
             <div class="form-group">
                 <label for="password" class="highlight">Password</label>
-                <!-- Input field for password -->
+                <!-- Campo de entrada para la contraseña -->
                 <input type="password" class="form-control" id="password" name="password" required>
             </div>
-            <!-- Form group for confirm password input -->
+            <!-- Grupo de entrada para confirmar la contraseña -->
             <div class="form-group">
                 <label for="confirm_password" class="highlight">Confirm Password</label>
-                <!-- Input field for confirm password -->
+                <!-- Campo de entrada para confirmar la contraseña -->
                 <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
             </div>
-            <!-- Role selection for registration -->
+            <!-- Selección de rol para el registro -->
             <div class="form-group">
                 <label for="role" class="highlight">Role</label>
-                <!-- Dropdown to select role -->
+                <!-- Dropdown para seleccionar el rol -->
                 <select class="form-control" id="role" name="role" required>
                     <option value="client" selected>Client</option>
                     <option value="employee">Employee</option>
-                    <!-- Master and Developer options are not available during initial registration -->
+                    <!-- Opciones para Master y Developer no están disponibles durante el registro inicial -->
                 </select>
             </div>
-            <!-- Submit button for registration -->
+            <!-- Botón de envío para el registro -->
             <button type="submit" class="btn btn-primary">Register</button>
         </form>
     </div>
+    
+    <!-- Incluir el archivo JavaScript para las interacciones de login -->
+    <script src="/static/js/login.js" defer></script>
 {% endblock %}

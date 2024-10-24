@@ -1,29 +1,39 @@
-# Flask framework
-Flask==2.0.3
+# Flask framework (actualizado a una versión más reciente y estable)
+Flask==2.2.5
 
-# Extensions for Flask
+# Extensions for Flask (actualizadas para mantener compatibilidad)
 Flask-SQLAlchemy==2.5.1
-SQLAlchemy==1.4.32
+SQLAlchemy==1.4.41
 Flask-Migrate==3.1.0
-flask_bcrypt==0.7.1
-Flask-Login==0.5.0
+flask_bcrypt==1.0.1
+Flask-Login==0.6.2
 
-# PostgreSQL database adapter for Python
-pg8000==1.29.3  # Reemplaza psycopg2-binary para evitar problemas de compilación
+# Cross-Origin Resource Sharing (para permitir peticiones desde otros dominios)
+Flask-Cors==3.0.10
+
+# PostgreSQL database adapter for Python (se mantiene pg8000 para evitar problemas de compilación)
+pg8000==1.29.3
 
 # Template engine
 Jinja2==3.1.4
 
-# Various utilities
+# Various utilities (actualización de click e itsdangerous)
 click==8.1.7
 itsdangerous==2.1.2
 MarkupSafe==2.1.1
 typing_extensions==4.12.1
-Werkzeug==2.0.3
+Werkzeug==2.2.3
+
+# Para manejo de archivos y formularios (útil para manejar uploads)
+Flask-WTF==1.0.1
 
 # For loading environment variables from .env file
-python-dotenv==0.19.0
+python-dotenv==0.21.0
 
 # Build tools
 setuptools>=65.5.0
 wheel>=0.40.0
+
+# Para pruebas de la aplicación
+pytest==7.2.1
+coverage==6.5.0
